@@ -12,7 +12,7 @@ export const LeafletMapContainer = ({
   ...props
 }: LeafletMapContainerProps) => {
   const { setMap, setLeafletLib } = useMapContext();
-  const [geojsonData, setGeojsonData] = useState(null); // State to store GeoJSON data
+  const [floodZoneData, setFloodZoneData] = useState(null);
 
   useEffect(() => {
     if (!setLeafletLib) return;
@@ -20,22 +20,21 @@ export const LeafletMapContainer = ({
       setLeafletLib(leaflet);
     });
 
-    // Fetch GeoJSON data
-    const loadGeoJSON = async () => {
+    const loadFloodZones = async () => {
       try {
-        // Replace with the path to your GeoJSON file
-        const response = await fetch('/river.geojson');
+        const response = await fetch('/api/floodzones'); // Replace with your GeoJSON path
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const geojson = await response.json();
-        setGeojsonData(geojson);
+        const floodZones = await response.json();
+        setFloodZoneData(floodZones);
+        console.log(floodZones)
+        console.log(floodZoneData)
       } catch (err) {
-        console.error('Error loading GeoJSON:', err);
+        console.error('Error loading flood zones:', err);
       }
     };
-
-    loadGeoJSON();
+    loadFloodZones();
   }, [setLeafletLib]);
 
   return (
@@ -44,24 +43,43 @@ export const LeafletMapContainer = ({
       className="absolute h-full w-full text-white outline-0"
       center={[28.3949, 84.1240]} // Center on Nepal
       zoom={7} // Initial zoom level
-      maxBounds={new LatLngBounds([26.347, 80.058], [30.422, 88.201])}
+      // maxBounds={new LatLngBounds([26.347, 80.058], [30.422, 88.201])}
       {...props}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
-      {/* {geojsonData && (
+      {floodZoneData && (
         <GeoJSON
-          data={geojsonData}
-          style={{
-            color: 'blue', // Line color
-            weight: 2, // Border thickness
-            fillColor: 'lightblue', // Fill color
-            fillOpacity: 0.5, // Transparency
-          }}
+        key={JSON.stringify(floodZoneData)}
+        data={floodZoneData}
+        style={(feature) => {
+          // Style based on the severity property
+          const severity = feature.properties.severity;
+          let color = 'gray';
+          if (severity === 'High') {
+            color = 'red';
+          } else if (severity === 'Moderate') {
+            color = 'orange';
+          } else if (severity === 'Low') {
+            color = 'green';
+          }
+
+          return {
+            color: color, // Line/border color
+            weight: 1,
+            fillColor: color, // Fill color for polygons
+            fillOpacity: 0.5,
+          };
+        }}
+        onEachFeature={(feature, layer) => {
+          layer.bindPopup(
+            `<strong>${feature.properties.name}</strong><br>Severity: ${feature.properties.severity}`
+          );
+        }}
         />
-      )} */}
+      )}
       {children}
     </MapContainer>
   );
