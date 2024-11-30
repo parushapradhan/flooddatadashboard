@@ -62,6 +62,7 @@ const LeafletMapInner = () => {
       const { lat, lon } = data[0];
       setPosition([parseFloat(lat), parseFloat(lon)]);
       setResults(data);
+      map.flyTo([parseFloat(lat), parseFloat(lon)], 12, { animate: true });
     } else {
       alert('No results found!');
     }
