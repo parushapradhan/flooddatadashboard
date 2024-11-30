@@ -18,10 +18,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get the reusable connection pool
     const pool = await getMSSQLPool();
 
-    // Query user by email
     const result = await pool
       .request()
       .input('email', sql.NVarChar, email)
@@ -33,13 +31,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    // Compare the password
+
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    // Generate a JWT token
+
     const token = jwt.sign({ userId: user.user_id }, JWT_SECRET, { expiresIn: '1h' });
 
     // Set the token as a cookie

@@ -37,6 +37,7 @@
     "cookie-parser": "^1.4.7",
     "dayjs": "^1.11.13",
     "express": "^4.21.1",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.3",
     "leaflet.markercluster": "^1.5.3",

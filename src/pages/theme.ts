@@ -7,7 +7,7 @@ const theme = createTheme({
   },
   colorSchemes: {
     light: true,
-    dark: false,
+    dark: true,
   },
 });
 
