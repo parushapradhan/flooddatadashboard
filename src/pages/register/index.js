@@ -12,6 +12,8 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import RegisterPageLayout from '../../components/register-layout';
 
 const RegisterForm = () => {
@@ -20,10 +22,9 @@ const RegisterForm = () => {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '', // New phone number field
+    phone: '', // Phone number field
     password: '',
-    userAddress: '', // For User
-    organizationName: '', // For Owner
+    dob: null, // Date of birth field
   });
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
   const [mounted, setMounted] = useState(false); // To handle hydration issues
@@ -38,6 +39,10 @@ const RegisterForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleDateChange = (date) => {
+    setFormData((prev) => ({ ...prev, dob: date }));
+  };
+
   const handleToggle = () => {
     setIsOwner((prev) => !prev);
     setFormData((prev) => ({
@@ -49,9 +54,11 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = isOwner
-      ? { ...formData, role: 'owner' }
-      : { ...formData, role: 'user' };
+
+    const payload = {
+      ...formData,
+      role: isOwner ? 'owner' : 'user',
+    };
 
     try {
       const response = await fetch('/api/register', {
@@ -91,141 +98,126 @@ const RegisterForm = () => {
 
   return (
     <RegisterPageLayout>
-      <Container maxWidth="sm">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            mt: 8,
-          }}
-        >
-          <Typography component="h1" variant="h5" gutterBottom>
-            Register as {isOwner ? 'Owner' : 'User'}
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  name="firstName"
-                  autoComplete="given-name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="phone"
-                  label="Phone Number"
-                  name="phone"
-                  autoComplete="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </Grid>
-              {!isOwner && (
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="userAddress"
-                    label="Address"
-                    name="userAddress"
-                    value={formData.userAddress}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              )}
-              {isOwner && (
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="organizationName"
-                    label="Organization Name"
-                    name="organizationName"
-                    value={formData.organizationName}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              )}
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Container maxWidth="sm">
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              mt: 8,
+            }}
+          >
+            <Typography component="h1" variant="h5" gutterBottom>
               Register as {isOwner ? 'Owner' : 'User'}
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    name="firstName"
+                    autoComplete="given-name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="phone"
+                    label="Phone Number"
+                    name="phone"
+                    autoComplete="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <DatePicker
+                    label="Date of Birth"
+                    value={formData.dob}
+                    onChange={handleDateChange}
+                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                  />
+                </Grid>
+ 
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Register as {isOwner ? 'Owner' : 'User'}
+              </Button>
+            </Box>
+            <Divider sx={{ my: 3, width: '100%' }}>
+              Or sign up as an Owner
+            </Divider>
+            <Button
+              variant="outlined"
+              onClick={handleToggle}
+              fullWidth
+              sx={{ mt: 1 }}
+            >
+              {isOwner ? 'Switch to User Registration' : 'Switch to Owner Registration'}
             </Button>
           </Box>
-          <Divider sx={{ my: 3, width: '100%' }}>
-            Or sign up as an Owner
-          </Divider>
-          <Button
-            variant="outlined"
-            onClick={handleToggle}
-            fullWidth
-            sx={{ mt: 1 }}
-          >
-            {isOwner ? 'Switch to User Registration' : 'Switch to Owner Registration'}
-          </Button>
-        </Box>
 
-        {/* Notification Snackbar */}
-        <Snackbar
-          open={notification.open}
-          autoHideDuration={6000}
-          onClose={handleCloseNotification}
-        >
-          <Alert onClose={handleCloseNotification} severity={notification.severity}>
-            {notification.message}
-          </Alert>
-        </Snackbar>
-      </Container>
+          {/* Notification Snackbar */}
+          <Snackbar
+            open={notification.open}
+            autoHideDuration={6000}
+            onClose={handleCloseNotification}
+          >
+            <Alert onClose={handleCloseNotification} severity={notification.severity}>
+              {notification.message}
+            </Alert>
+          </Snackbar>
+        </Container>
+      </LocalizationProvider>
     </RegisterPageLayout>
   );
 };
