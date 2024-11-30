@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     const result = await pool
       .request()
       .input('email', sql.NVarChar, email)
-      .query('SELECT * FROM users WHERE email = @email');
+      .query('SELECT * FROM User_Information WHERE email = @email');
 
     const user = result.recordset[0];
 

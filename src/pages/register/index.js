@@ -13,12 +13,14 @@ import {
   Alert,
 } from '@mui/material';
 import RegisterPageLayout from '../../components/register-layout';
+
 const RegisterForm = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    phone: '', // New phone number field
     password: '',
     userAddress: '', // For User
     organizationName: '', // For Owner
@@ -136,6 +138,18 @@ const RegisterForm = () => {
                   name="email"
                   autoComplete="email"
                   value={formData.email}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="phone"
+                  label="Phone Number"
+                  name="phone"
+                  autoComplete="tel"
+                  value={formData.phone}
                   onChange={handleChange}
                 />
               </Grid>
