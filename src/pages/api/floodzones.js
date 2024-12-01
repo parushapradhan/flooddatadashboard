@@ -3,11 +3,29 @@ import getMSSQLPool from '#src/lib/db/getDBPool';
 
 export default async function handler(req, res) {
   try {
+    // const { district } = req.query; // Get district name from the query string
+    //TODO Replace the static district
+
+
+    const district = "Kathmandu"
+
+    if (!district) {
+      return res.status(400).json({ error: 'District name is required' });
+    }
+
     const pool = await getMSSQLPool();
     const result = await pool
       .request()
-      .query('SELECT id, name, severity, coordinates FROM flood_zones');
+      .input('district', district)
+      .query(
+        `
+        SELECT f.id, f.name, f.severity, f.coordinates
+        FROM flood_zones f
 
+        `
+      )
+      // INNER JOIN district d ON f.district_id = d.district_id
+      // WHERE d.district = @district
     const features = result.recordset.map(row => ({
       type: 'Feature',
       properties: {

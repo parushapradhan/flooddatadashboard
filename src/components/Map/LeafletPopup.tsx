@@ -59,12 +59,12 @@ const LeafletPopup = ({
                       position: 'absolute',
                       top: '10px',
                       left: '10px',
-                      backgroundColor: '#ffffff',
+                      backgroundColor: 'red',
                       padding: '5px 10px',
                       borderRadius: '4px',
                       fontSize: '12px',
                       fontWeight: 'bold',
-                      color: '#000',
+                      color: 'white',
                     }}
                   >
                     High Risk
@@ -85,9 +85,8 @@ const LeafletPopup = ({
 
                 {/* button */}
                 <div className="mt-6 flex flex-row justify-between gap-2 p-2 rounded">
-                  <button className="gap-2 bg-primary text-white" onClick={() => handleOpenLocation()}>
+                  <button className="gap-2 bg-primary text-white rounded p-2" onClick={() => handleOpenLocation()}>
                     View More Details
-                    <ChevronRight size={AppConfig.ui.menuIconSize} />
                   </button>
                 </div>
           </div>

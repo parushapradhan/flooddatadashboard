@@ -2,7 +2,6 @@ import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import { AppProvider,  } from '@toolpad/core/nextjs';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 // import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import theme from './theme';
@@ -14,6 +13,7 @@ import '#components/Map/leaflet-custom.css';
 import '#src/globals.css';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import HomeIcon from '@mui/icons-material/Home';
 
 const NAVIGATION: Navigation = [
   {
@@ -25,10 +25,10 @@ const NAVIGATION: Navigation = [
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },
-  {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
+    {
+    segment: 'listings',
+    title: 'Your Listing',
+    icon: <HomeIcon />,
   },
 ];
 
@@ -103,7 +103,7 @@ export default function RootLayout({ children, Component, pageProps }: AppProps 
           authentication={authentication}
           branding={{
             logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
-            title: 'Flood Monitoring System',
+            title: 'Flood Risk Indicator',
           }}
           >
 

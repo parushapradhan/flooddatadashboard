@@ -45,7 +45,7 @@ export const SearchBar = () => {
   )
 
   return (
-    <div className="absolute top-4 left-4 z-400 w-80 bg-white shadow-md p-4 rounded-md">
+    <div className=" z-400 w-80 bg-white shadow-md p-4 rounded-md">
       <div className="flex flex-col space-y-2">
         <input
           type="text"

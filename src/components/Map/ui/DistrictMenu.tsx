@@ -19,7 +19,7 @@ const districts: District[] = [
 ]
 
 export const FilterComponent = () => {
-  const { map } = useMapContext()
+  const { map, setDistrict } = useMapContext();
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [filteredDistricts, setFilteredDistricts] = useState<District[]>(districts)
 
@@ -40,14 +40,15 @@ export const FilterComponent = () => {
     (district: District) => {
       const position: LatLngExpression = [district.lat, district.lon]
       map?.flyTo(position, 12, { animate: true })
+      // setDistrict(district.name); //TODO FIX THE DISTRICT ISSUE
       setSearchQuery('')
       setFilteredDistricts(districts)
     },
-    [map]
+    [map,setDistrict]
   )
 
   return (
-    <div className="absolute top-4 left-4 z-400 w-80 bg-white shadow-md p-4 rounded-md">
+    <div className=" w-80 bg-white shadow-md p-4 rounded-md">
       <div className="flex flex-col space-y-2">
         <input
           type="text"

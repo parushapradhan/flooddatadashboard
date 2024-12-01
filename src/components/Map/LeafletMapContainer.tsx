@@ -11,7 +11,7 @@ export const LeafletMapContainer = ({
   children,
   ...props
 }: LeafletMapContainerProps) => {
-  const { setMap, setLeafletLib } = useMapContext();
+  const { setMap, setLeafletLib, district } = useMapContext();
   const [floodZoneData, setFloodZoneData] = useState(null);
 
   useEffect(() => {
@@ -22,27 +22,31 @@ export const LeafletMapContainer = ({
 
     const loadFloodZones = async () => {
       try {
-        const response = await fetch('/api/floodzones'); // Replace with your GeoJSON path
+        const response = await fetch('/api/floodzones', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ district: district }),
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const floodZones = await response.json();
         setFloodZoneData(floodZones);
-        console.log(floodZones)
-        console.log(floodZoneData)
       } catch (err) {
         console.error('Error loading flood zones:', err);
       }
     };
     loadFloodZones();
-  }, [setLeafletLib]);
+  }, [setLeafletLib, district]);
 
   return (
     <MapContainer
       ref={(e) => setMap && setMap(e || undefined)}
-      className="absolute h-full w-full text-white outline-0"
+      className=" h-full w-full text-white outline-0"
       center={[28.3949, 84.1240]} // Center on Nepal
-      zoom={7} // Initial zoom level
+      zoom={14} // Initial zoom level
       // maxBounds={new LatLngBounds([26.347, 80.058], [30.422, 88.201])}
       {...props}
     >
