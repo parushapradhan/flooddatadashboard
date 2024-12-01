@@ -83,8 +83,8 @@ const LeafletMapInner = () => {
   return (
 
     <div className="absolute h-full w-full overflow-hidden" ref={viewportRef}>
-      <div className="absolute top-0 left-0 w-full flex p-4 z-10 ">
-        <form onSubmit={handleSearch} className="flex items-center space-x-2">
+      <div className="absolute top-0 left-0 w-full flex p-4 z-10 " >
+        <form onSubmit={handleSearch} className="flex items-center space-x-2" style={{ zIndex: 400 }}>
           <input
             type="text"
             placeholder="Search for a location"
@@ -104,10 +104,9 @@ const LeafletMapInner = () => {
         className={`absolute left-0 w-full transition-opacity ${isLoading ? 'opacity-0' : 'opacity-1 '}`}
         style={{
           top: AppConfig.ui.topBarHeight,
-          width: viewportWidth ?? '60%',
-          height: viewportHeight ? viewportHeight - AppConfig.ui.topBarHeight : '60%',
-          // width: '65%',
-          // height: '80%'
+          // width: viewportWidth ?? '60%',
+          width: '65%',
+          height: '80%'
         }}
       >
         {allMarkersBoundCenter && clustersByCategory && (
@@ -124,6 +123,7 @@ const LeafletMapInner = () => {
                   zoom={allMarkersBoundCenter.minZoom}
                 />
                 <LocateButton />
+
                 {Object.values(clustersByCategory).map(item => (
                   <LeafletCluster
                     key={item.category}
