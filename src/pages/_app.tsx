@@ -2,10 +2,11 @@ import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import { AppProvider } from '@toolpad/core/nextjs';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-// import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import HomeIcon from '@mui/icons-material/Home';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import theme from './theme';
+import { Button, Typography } from '@mui/material';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import '#components/Map/leaflet-custom.css';
@@ -31,11 +32,17 @@ const NAVIGATION: Navigation = [
   },
 ];
 
-export default function App({ Component, pageProps }: any) {
+export default function RootLayout({ children, Component, pageProps }: AppProps & { children: React.ReactNode }) {
   const router = useRouter();
   const [session, setSession] = React.useState<Session | null>(null);
+  const [isClient, setIsClient] = React.useState(false);
+  const [excludeLayout, setExcludeLayout] = React.useState(false);
 
+  // Detect if the current route should exclude the layout (e.g., /login, /register)
   React.useEffect(() => {
+    setIsClient(true);
+    setExcludeLayout(['/login', '/register'].includes(router.pathname));
+
     const token = Cookies.get('auth_token');
     if (token) {
       fetch('/api/me', {
@@ -49,11 +56,12 @@ export default function App({ Component, pageProps }: any) {
               user: {
                 name: data.name,
                 email: data.email,
+                image: data.image || null,
               },
             });
           } else {
             console.error('Failed to validate token');
-            setSession(null); // Reset session on failure
+            setSession(null);
           }
         })
         .catch((err) => {
@@ -61,21 +69,34 @@ export default function App({ Component, pageProps }: any) {
           setSession(null);
         });
     }
-  }, []);
+  }, [router.pathname]);
 
   const authentication = React.useMemo(() => ({
     signIn: () => {
       router.push('/login'); // Redirect to login page
     },
-    signOut: () => {
-      Cookies.remove('auth_token');
-      setSession(null);
-      router.push('/login'); // Redirect to login page after sign out
+    signOut: async () => {
+      try {
+        const response = await fetch('/api/logout', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${Cookies.get('auth_token')}`,
+          },
+        });
+
+        if (response.ok) {
+          Cookies.remove('auth_token'); // Remove token from cookies
+          setSession(null); // Clear session state
+          router.push('/'); // Redirect to dashboard (root page)
+        } else {
+          console.error('Failed to logout:', await response.json());
+        }
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
     },
   }), [router]);
 
-  // Determine if the current page should exclude the global layout
-  const excludeLayout = ['/login', '/register'].includes(router.pathname);
 
   return (
     <>
@@ -90,16 +111,16 @@ export default function App({ Component, pageProps }: any) {
         authentication={authentication}
         branding={{
           logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
-          title: 'Flood Monitoring System',
+          title: 'Flood Risk Indicator',
         }}
       >
         {excludeLayout ? (
-          // Render pages like /login or /register without the DashboardLayout
-          <Component {...pageProps} />
+          // For routes like /register or /login, render without any header or layout
+          <main>{children || <Component {...pageProps} />}</main>
         ) : (
-          // Wrap all other pages in the DashboardLayout
+          // For all other routes, render with DashboardLayout and its header
           <DashboardLayout>
-            <Component {...pageProps} />
+            <main>{children || <Component {...pageProps} />}</main>
           </DashboardLayout>
         )}
       </AppProvider>
