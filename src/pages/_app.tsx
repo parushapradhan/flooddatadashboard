@@ -12,7 +12,6 @@ import '#components/Map/leaflet-custom.css';
 import '#src/globals.css';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
-import HomeIcon from '@mui/icons-material/Home';
 
 // Base navigation items
 const NAVIGATION_BASE: Navigation = [
@@ -100,20 +99,6 @@ export default function RootLayout({
       }
     },
   }), [router]);
-
-  const authentication = React.useMemo(
-    () => ({
-      signIn: () => {
-        router.push('/login'); // Redirect to login page
-      },
-      signOut: () => {
-        Cookies.remove('auth_token');
-        setSession(null);
-        router.push('/'); // Redirect to login page after logout
-      },
-    }),
-    [router]
-  );
 
   // Dynamically include the "Your Listing" item only if the user is logged in
   const NAVIGATION = React.useMemo(() => {
