@@ -5,7 +5,6 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeIcon from '@mui/icons-material/Home';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import theme from './theme';
-import { Button, Typography } from '@mui/material';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
@@ -15,7 +14,8 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import HomeIcon from '@mui/icons-material/Home';
 
-const NAVIGATION: Navigation = [
+// Base navigation items
+const NAVIGATION_BASE: Navigation = [
   {
     kind: 'header',
     title: 'Main items',
@@ -32,7 +32,11 @@ const NAVIGATION: Navigation = [
   },
 ];
 
-export default function RootLayout({ children, Component, pageProps }: AppProps & { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+  Component,
+  pageProps,
+}: AppProps & { children: React.ReactNode }) {
   const router = useRouter();
   const [session, setSession] = React.useState<Session | null>(null);
   const [isClient, setIsClient] = React.useState(false);
@@ -45,7 +49,7 @@ export default function RootLayout({ children, Component, pageProps }: AppProps 
 
     const token = Cookies.get('auth_token');
     if (token) {
-      fetch('/api/me', {
+      fetch('/api/getUserSession', {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -97,6 +101,32 @@ export default function RootLayout({ children, Component, pageProps }: AppProps 
     },
   }), [router]);
 
+  const authentication = React.useMemo(
+    () => ({
+      signIn: () => {
+        router.push('/login'); // Redirect to login page
+      },
+      signOut: () => {
+        Cookies.remove('auth_token');
+        setSession(null);
+        router.push('/'); // Redirect to login page after logout
+      },
+    }),
+    [router]
+  );
+
+  // Dynamically include the "Your Listing" item only if the user is logged in
+  const NAVIGATION = React.useMemo(() => {
+    const navItems = [...NAVIGATION_BASE];
+    if (session) {
+      navItems.push({
+        segment: 'listings',
+        title: 'Your Listing',
+        icon: <HomeIcon />,
+      });
+    }
+    return navItems;
+  }, [session]);
 
   return (
     <>
