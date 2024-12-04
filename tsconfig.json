@@ -24,6 +24,6 @@
       "#root/*": ["./*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/lib/db/getDBPool.js", "src/pages/listings/index.js", "src/components/Map/ui/ClimateData.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/lib/db/getDBPool.js", "src/pages/listings/index.js", "src/components/Map/ui/ClimateData.tsx"],
   "exclude": ["node_modules"]
 }

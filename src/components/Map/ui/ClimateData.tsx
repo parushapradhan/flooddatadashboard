@@ -19,17 +19,11 @@ import {
 const ClimateData = () => {
   const [district, setDistrict] = useState('Kathmandu'); // Default district
   const [climateData, setClimateData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [years, setYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const districts = [
-    'Kathmandu',
-    'Pokhara',
-    'Biratnagar',
-    'Lalitpur',
-    'Bhaktapur',
-    // Add more districts here
-  ];
 
   useEffect(() => {
     const fetchClimateData = async () => {
@@ -42,6 +36,19 @@ const ClimateData = () => {
         }
         const data = await response.json();
         setClimateData(data);
+
+        // Extract unique years and sort them in descending order
+        const uniqueYears = [...new Set(data.map((item) => item.year))].sort(
+          (a, b) => b - a
+        );
+        setYears(uniqueYears);
+
+        // Set the default selected year to the latest year
+        if (uniqueYears.length > 0) {
+          setSelectedYear(uniqueYears[0]);
+          const latestYearData = data.filter((item) => item.year === uniqueYears[0]);
+          setFilteredData(latestYearData);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -52,27 +59,45 @@ const ClimateData = () => {
     fetchClimateData();
   }, [district]);
 
-  const handleDistrictChange = (event) => {
-    setDistrict(event.target.value);
+  const handleYearChange = (event) => {
+    const year = event.target.value;
+    setSelectedYear(year);
+    const yearData = climateData.filter((item) => item.year === year);
+    setFilteredData(yearData);
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4, p: 2 }}>
-      <Typography variant="h5" gutterBottom>
+    <Box
+      sx={{
+        maxWidth: 400,
+        mx: 'auto',
+        mt: 4,
+        p: 2,
+        height: 300,
+        overflowY: 'auto',
+        boxShadow: 2,
+        borderRadius: 2,
+        backgroundColor: '#fff',
+      }}
+    >
+      <Typography
+        variant="subtitle1"
+        gutterBottom
+        sx={{ fontWeight: 'bold', textAlign: 'center' }}
+      >
         Climate Data for {district}
       </Typography>
 
-      {/* District Selector */}
+      {/* Year Selector */}
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="district-select-label">Select District</InputLabel>
         <Select
-          labelId="district-select-label"
-          value={district}
-          onChange={handleDistrictChange}
+          labelId="year-select-label"
+          value={selectedYear}
+          onChange={handleYearChange}
         >
-          {districts.map((district) => (
-            <MenuItem key={district} value={district}>
-              {district}
+          {years.map((year) => (
+            <MenuItem key={year} value={year}>
+              {year}
             </MenuItem>
           ))}
         </Select>
@@ -93,26 +118,22 @@ const ClimateData = () => {
       )}
 
       {/* Climate Data Table */}
-      {!loading && !error && climateData.length > 0 && (
-        <TableContainer component={Paper} sx={{ mt: 2 }}>
-          <Table>
+      {!loading && !error && filteredData.length > 0 && (
+        <TableContainer  sx={{ mt: 2 }}>
+          <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Year</TableCell>
                 <TableCell>Avg Rainfall (mm)</TableCell>
                 <TableCell>Max Rainfall (mm)</TableCell>
                 <TableCell>Temperature (°C)</TableCell>
-                <TableCell>Source</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {climateData.map((row) => (
+              {filteredData.map((row) => (
                 <TableRow key={row.climate_id}>
-                  <TableCell>{row.year}</TableCell>
                   <TableCell>{row.average_rainfall_mm}</TableCell>
                   <TableCell>{row.max_rainfall_mm}</TableCell>
                   <TableCell>{row.temperature_c}</TableCell>
-                  <TableCell>{row.source}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -121,9 +142,9 @@ const ClimateData = () => {
       )}
 
       {/* No Data */}
-      {!loading && !error && climateData.length === 0 && (
+      {!loading && !error && filteredData.length === 0 && (
         <Typography sx={{ mt: 2, textAlign: 'center' }}>
-          No climate data available for {district}.
+          No climate data available for {selectedYear} in {district}.
         </Typography>
       )}
     </Box>

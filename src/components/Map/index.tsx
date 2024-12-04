@@ -119,7 +119,7 @@ const LeafletMapInner = () => {
           <Stack spacing={3}>
             <SearchBar/>
             <FilterComponent/>
-            {/* <ClimateData/> */}
+            <ClimateData/>
           </Stack>
 
         </Grid>
