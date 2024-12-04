@@ -13,6 +13,7 @@ import { SearchBar } from './ui/Searchbar';
 import { FilterComponent } from './ui/DistrictMenu';
 import { Legend } from './LeafletLegend'
 import ClimateData from './ui/ClimateData'
+
 const LeafletCluster = dynamic(async () => (await import('./LeafletCluster')).LeafletCluster(), {
   ssr: false,
 })
