@@ -1,10 +1,14 @@
-import jwt from 'jsonwebtoken';
-import sql from 'mssql';
 import getMSSQLPool from '#src/lib/db/getDBPool';
+import sql from 'mssql';
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -15,7 +19,7 @@ export default async function handler(req, res) {
   const token = authHeader.split(' ')[1];
 
   try {
-    // Decode and validate the JWT token
+    // Decode the token to get the user ID
     const decoded = jwt.verify(token, JWT_SECRET);
 
     console.log('Decoded token:', decoded);
@@ -23,33 +27,32 @@ export default async function handler(req, res) {
     // Connect to the database
     const pool = await getMSSQLPool();
 
-    // Fetch user session information
+    const query = `
+      SELECT notification_id, property_id, user_id, message, created_at, is_read
+      FROM Notifications
+      WHERE user_id = @user_id
+      ORDER BY created_at DESC;
+    `;
+
     const result = await pool
       .request()
-      .input('userId', sql.Int, decoded.userId)
-      .query('SELECT user_id, name, email FROM User_Information WHERE user_id = @userId');
+      .input('user_id', sql.Int, decoded.userId) // Use userId from the token
+      .query(query);
 
-    if (!result.recordset.length) {
-      console.error('User not found for ID:', decoded.userId);
-      return res.status(404).json({ error: 'User not found' });
-    }
+    const notifications = result.recordset;
 
-    const user = result.recordset[0];
-    console.log('User session retrieved:', user);
-
-    return res.status(200).json({ user_id: user.user_id, name: user.name, email: user.email });
+    res.status(200).json({ notifications });
   } catch (err) {
-    console.error('Error in getUserSession handler:', err);
+    console.error('Error fetching notifications:', err);
 
     if (err.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expired' });
     }
 
     if (err.code === 'ECONNCLOSED') {
-      console.error('Database connection is closed');
       return res.status(500).json({ error: 'Database connection error' });
     }
 
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

@@ -9,6 +9,11 @@ const config = {
         encrypt: true, // Required for Azure SQL
         trustServerCertificate: false, // Set to true if using self-signed certificates
     },
+    pool: {
+        max: 10, // Maximum number of connections
+        min: 0,  // Minimum number of connections
+        idleTimeoutMillis: 30000, // Idle timeout before closing
+    },
 };
 
 let pool = null;
@@ -35,4 +40,4 @@ async function getMSSQLPool() {
     }
 }
 
-module.exports = getMSSQLPool;
+export default getMSSQLPool;

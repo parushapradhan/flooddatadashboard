@@ -1,6 +1,7 @@
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import { AppProvider } from '@toolpad/core/nextjs';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeIcon from '@mui/icons-material/Home';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
@@ -24,11 +25,7 @@ const NAVIGATION_BASE: Navigation = [
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },
-    {
-    segment: 'listings',
-    title: 'Your Listing',
-    icon: <HomeIcon />,
-  },
+
 ];
 
 export default function RootLayout({
@@ -40,8 +37,9 @@ export default function RootLayout({
   const [session, setSession] = React.useState<Session | null>(null);
   const [isClient, setIsClient] = React.useState(false);
   const [excludeLayout, setExcludeLayout] = React.useState(false);
+  const [navigation, setNavigation] = React.useState(NAVIGATION_BASE);
 
-  // Detect if the current route should exclude the layout (e.g., /login, /register)
+  // Handle session and layout exclusions
   React.useEffect(() => {
     setIsClient(true);
     setExcludeLayout(['/login', '/register'].includes(router.pathname));
@@ -74,44 +72,56 @@ export default function RootLayout({
     }
   }, [router.pathname]);
 
-  const authentication = React.useMemo(() => ({
-    signIn: () => {
-      router.push('/login'); // Redirect to login page
-    },
-    signOut: async () => {
-      try {
-        const response = await fetch('/api/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${Cookies.get('auth_token')}`,
-          },
-        });
-
-        if (response.ok) {
-          Cookies.remove('auth_token'); // Remove token from cookies
-          setSession(null); // Clear session state
-          router.push('/'); // Redirect to dashboard (root page)
-        } else {
-          console.error('Failed to logout:', await response.json());
-        }
-      } catch (err) {
-        console.error('Logout error:', err);
-      }
-    },
-  }), [router]);
-
-  // Dynamically include the "Your Listing" item only if the user is logged in
-  const NAVIGATION = React.useMemo(() => {
+  // Update navigation dynamically based on session state
+  React.useEffect(() => {
     const navItems = [...NAVIGATION_BASE];
     if (session) {
       navItems.push({
         segment: 'listings',
         title: 'Your Listing',
         icon: <HomeIcon />,
-      });
+      },
+    );
+      navItems.push(
+        {
+          segment: 'notifications',
+          title: 'Notifications',
+          icon: <NotificationsIcon/>
+        },
+      );
     }
-    return navItems;
+    setNavigation(navItems);
   }, [session]);
+
+  // Authentication functions
+  const authentication = React.useMemo(
+    () => ({
+      signIn: () => {
+        router.push('/login'); // Redirect to login page
+      },
+      signOut: async () => {
+        try {
+          const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${Cookies.get('auth_token')}`,
+            },
+          });
+
+          if (response.ok) {
+            Cookies.remove('auth_token'); // Remove token from cookies
+            setSession(null); // Clear session state
+            router.push('/'); // Redirect to dashboard (root page)
+          } else {
+            console.error('Failed to logout:', await response.json());
+          }
+        } catch (err) {
+          console.error('Logout error:', err);
+        }
+      },
+    }),
+    [router]
+  );
 
   return (
     <>
@@ -121,7 +131,7 @@ export default function RootLayout({
       </Head>
       <AppProvider
         theme={theme}
-        navigation={NAVIGATION}
+        navigation={navigation}
         session={session}
         authentication={authentication}
         branding={{
