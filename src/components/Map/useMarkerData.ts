@@ -19,7 +19,7 @@ interface allMarkerPosValues {
 
 const useMarkerData = ({ locations, map, viewportWidth, viewportHeight }: useMapDataValues) => {
   const [allMarkersBoundCenter, setAllMarkersBoundCenter] = useState<allMarkerPosValues>({
-    minZoom: AppConfig.minZoom - 5,
+    minZoom: AppConfig.minZoom - 6,
     centerPos: AppConfig.baseCenter,
   })
   const { leafletLib } = useMapContext()

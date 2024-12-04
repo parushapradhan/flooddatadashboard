@@ -129,3 +129,47 @@ export const Places: PlacesType = [
     image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTkzNjJ8MHwxfGFsbHwxMHx8fHx8fHwxNjkzNDY0MDgw&ixlib=rb-1.2.1&q=80&w=400',
   },
 ]
+
+// Function to map flood risk to categories
+const mapFloodRiskToCategory = (risk: string): Category => {
+  switch (risk.toLowerCase()) {
+    case 'low':
+      return Category.CAT1;
+    case 'medium':
+      return Category.CAT2;
+    case 'high':
+      return Category.CAT3;
+    default:
+      return Category.CAT1; // Default category
+  }
+};
+
+// Fetch places from the database via an API
+export const fetchPlaces = async (): Promise<PlacesType> => {
+  try {
+    const response = await fetch('/api/getPropertyData');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch property information');
+    }
+
+    const data = await response.json();
+
+    return data.map((property: any) => ({
+      id: property.property_id,
+      position: JSON.parse(property.position),
+      category: mapFloodRiskToCategory(property.current_flood_risk),
+      title: property.address,
+      address: property.address,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      sqft: property.square_feet,
+      image: property.image_url || 'https://via.placeholder.com/400',
+    }));
+  } catch (error) {
+    console.error('Error fetching places:', error);
+    return [];
+  }
+};
+
+

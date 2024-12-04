@@ -1,19 +1,29 @@
 
 import getMSSQLPool from '#src/lib/db/getDBPool';
+import sql from 'mssql';
+const config = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  options: {
+    encrypt: true, // Use encryption for Azure SQL or similar services
+    trustServerCertificate: false, // Change to true if using self-signed certificates
+  },
+};
 
 export default async function handler(req, res) {
   try {
-    // const { district } = req.query; // Get district name from the query string
-    //TODO Replace the static district
-
-
-    const district = "Kathmandu"
+    const { district } = req.body; // Get district name from the query string
 
     if (!district) {
       return res.status(400).json({ error: 'District name is required' });
     }
 
-    const pool = await getMSSQLPool();
+    // const pool = await getMSSQLPool();
+    let pool = new sql.ConnectionPool(config);
+    await pool.connect();
+
     const result = await pool
       .request()
       .input('district', district)
@@ -21,11 +31,11 @@ export default async function handler(req, res) {
         `
         SELECT f.id, f.name, f.severity, f.coordinates
         FROM flood_zones f
-
+        INNER JOIN District d ON f.district_id = d.district_id
+        WHERE d.district_name = @district
         `
       )
-      // INNER JOIN district d ON f.district_id = d.district_id
-      // WHERE d.district = @district
+
     const features = result.recordset.map(row => ({
       type: 'Feature',
       properties: {

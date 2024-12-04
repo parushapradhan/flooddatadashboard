@@ -15,9 +15,10 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
+import useMapContext from '../useMapContext'
 
 const ClimateData = () => {
-  const [district, setDistrict] = useState('Kathmandu'); // Default district
+  const { district } = useMapContext();
   const [climateData, setClimateData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [years, setYears] = useState([]);

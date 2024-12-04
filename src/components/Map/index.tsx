@@ -1,39 +1,38 @@
-import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
-import { useResizeDetector } from 'react-resize-detector'
-import { AppConfig } from '#lib/AppConfig'
-import MarkerCategories, { Category } from '#lib/MarkerCategories'
-import { Places } from '#lib/Places'
-import {  Stack } from '@mui/material';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { useResizeDetector } from 'react-resize-detector';
+import { AppConfig } from '#lib/AppConfig';
+import MarkerCategories, { Category } from '#lib/MarkerCategories';
+import { fetchPlaces, PlaceValues, Places } from '#lib/Places';
+import { Stack } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import LeafleftMapContextProvider from './LeafletMapContextProvider'
-import useMapContext from './useMapContext'
-import useMarkerData from './useMarkerData'
+import LeafleftMapContextProvider from './LeafletMapContextProvider';
+import useMapContext from './useMapContext';
+import useMarkerData from './useMarkerData';
 import { SearchBar } from './ui/Searchbar';
 import { FilterComponent } from './ui/DistrictMenu';
-import { Legend } from './LeafletLegend'
-import ClimateData from './ui/ClimateData'
+import { Legend } from './LeafletLegend';
+import ClimateData from './ui/ClimateData';
 
 const LeafletCluster = dynamic(async () => (await import('./LeafletCluster')).LeafletCluster(), {
   ssr: false,
-})
+});
 const CenterToMarkerButton = dynamic(async () => (await import('./ui/CenterButton')).CenterButton, {
   ssr: false,
-})
+});
 const CustomMarker = dynamic(async () => (await import('./LeafletMarker')).CustomMarker, {
   ssr: false,
-})
+});
 const LocateButton = dynamic(async () => (await import('./ui/LocateButton')).LocateButton, {
   ssr: false,
-})
+});
 const LeafletMapContainer = dynamic(async () => (await import('./LeafletMapContainer')).LeafletMapContainer, {
   ssr: false,
-})
-
-
+});
 
 const LeafletMapInner = () => {
-  const { map } = useMapContext()
+  const { map, district } = useMapContext();
+  console.log('map district',district)
   const {
     width: viewportWidth,
     height: viewportHeight,
@@ -41,41 +40,57 @@ const LeafletMapInner = () => {
   } = useResizeDetector({
     refreshMode: 'debounce',
     refreshRate: 200,
-  })
+  });
+
+  const [places, setPlaces] = useState<PlaceValues[]>([]);
+  const [isLoadingPlaces, setIsLoadingPlaces] = useState(true);
 
   const { clustersByCategory, allMarkersBoundCenter } = useMarkerData({
-    locations: Places,
+    locations: Places, // Use the dynamically fetched places
     map,
     viewportWidth,
     viewportHeight,
-  })
+  });
 
-  const isLoading = !map || !viewportWidth || !viewportHeight
+  const isLoading = !map || !viewportWidth || !viewportHeight;
 
-  /** watch position & zoom of all markers */
+  /** Fetch places and watch position & zoom of all markers */
   useEffect(() => {
-    if (!allMarkersBoundCenter || !map) return
+    // const loadPlaces = async () => {
+    //   try {
+    //     const data = await fetchPlaces(); // Fetch places dynamically
+    //     setPlaces(data);
+    //   } catch (error) {
+    //     console.error('Error loading places:', error);
+    //   } finally {
+    //     setIsLoadingPlaces(false);
+    //   }
+    // };
+
+    // loadPlaces();
+
+    if (!allMarkersBoundCenter || !map) return;
 
     const moveEnd = () => {
-      map.off('moveend', moveEnd)
-    }
+      map.off('moveend', moveEnd);
+    };
 
-    map.flyTo(allMarkersBoundCenter.centerPos, allMarkersBoundCenter.minZoom, { animate: false })
-    map.once('moveend', moveEnd)
-  }, [allMarkersBoundCenter, map])
+    map.flyTo(allMarkersBoundCenter.centerPos, allMarkersBoundCenter.minZoom, { animate: false });
+    map.once('moveend', moveEnd);
+  }, [allMarkersBoundCenter, map]);
 
   return (
-<div>
-  {/* absolute h-full w-full overflow-hidden */}
-  <Grid container spacing={2}>
+    <div>
+      <Grid container spacing={2}>
         <Grid size={9}>
-            <div
+          <div
             ref={viewportRef}
-            className={`transition-opacity ${isLoading ? 'opacity-0' : 'opacity-1 '}`}
+            key={district}
+            className={`transition-opacity ${isLoading ? 'opacity-0' : 'opacity-1'}`}
             style={{
               top: AppConfig.ui.topBarHeight,
               width: '100%',
-              height: '90vh'
+              height: '90vh',
             }}
           >
             {allMarkersBoundCenter && clustersByCategory && (
@@ -92,23 +107,21 @@ const LeafletMapInner = () => {
                       zoom={allMarkersBoundCenter.minZoom}
                     />
                     <LocateButton />
-                    <Legend/>
-                    {Object.values(clustersByCategory).map(item => (
+                    <Legend />
+                    {Object.values(clustersByCategory).map((item) => (
                       <LeafletCluster
                         key={item.category}
                         icon={MarkerCategories[item.category as Category].icon}
                         color={MarkerCategories[item.category as Category].color}
                         chunkedLoading
                       >
-                        {item.markers.map(marker => (
+                        {item.markers.map((marker) => (
                           <CustomMarker place={marker} key={marker.id} />
                         ))}
                       </LeafletCluster>
                     ))}
                   </>
                 ) : (
-                  // we have to spawn at least one element to keep it happy
-                  // eslint-disable-next-line react/jsx-no-useless-fragment
                   <></>
                 )}
               </LeafletMapContainer>
@@ -117,24 +130,21 @@ const LeafletMapInner = () => {
         </Grid>
         <Grid size={3}>
           <Stack spacing={3}>
-            <SearchBar/>
-            <FilterComponent/>
-            <ClimateData/>
+            <SearchBar />
+            <FilterComponent />
+            <ClimateData />
           </Stack>
-
         </Grid>
+      </Grid>
+    </div>
+  );
+};
 
-  </Grid>
-</div>
-
-  )
-}
-
-// pass through to get context in <MapInner>
+// Pass through to get context in <MapInner>
 const Map = () => (
   <LeafleftMapContextProvider>
     <LeafletMapInner />
   </LeafleftMapContextProvider>
-)
+);
 
-export default Map
+export default Map;

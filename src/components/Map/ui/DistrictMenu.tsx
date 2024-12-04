@@ -39,8 +39,9 @@ export const FilterComponent = () => {
   const handleDistrictClick = useCallback(
     (district: District) => {
       const position: LatLngExpression = [district.lat, district.lon]
+      setDistrict(district.name); //TODO FIX THE DISTRICT ISSUE
       map?.flyTo(position, 12, { animate: true })
-      // setDistrict(district.name); //TODO FIX THE DISTRICT ISSUE
+      console.log(district.name)
       setSearchQuery('')
       setFilteredDistricts(districts)
     },

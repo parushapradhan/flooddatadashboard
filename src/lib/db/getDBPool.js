@@ -17,12 +17,22 @@ let pool = null;
  * Get or create a reusable MSSQL connection pool.
  */
 async function getMSSQLPool() {
-    if (!pool) {
-        console.log('Creating a new MSSQL connection pool...');
-        pool = new sql.ConnectionPool(config);
-        await pool.connect();
+    try {
+        if (!pool || !pool.connected) {
+            if (pool && !pool.connected) {
+                console.log('Connection pool is closed. Reconnecting...');
+                await pool.close();
+            }
+            console.log('Creating a new MSSQL connection pool...');
+            pool = new sql.ConnectionPool(config);
+            await pool.connect();
+        }
+        return pool;
+    } catch (error) {
+        console.error('Error connecting to MSSQL:', error);
+        pool = null; // Reset pool to allow reconnection in the future
+        throw error; // Rethrow the error for further handling
     }
-    return pool;
 }
 
 module.exports = getMSSQLPool;
