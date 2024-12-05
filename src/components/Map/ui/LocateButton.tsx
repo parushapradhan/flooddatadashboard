@@ -46,6 +46,10 @@ export const LocateButton = () => {
             address: 'You are here',
             position: userPosition,
             category: Category.LOCATE,
+            bedrooms: 0, // Add default value
+            bathrooms: 0, // Add default value
+            sqft: 0, // Add default value
+            image: '', // Add default or placeholder value
           }}
         />
       )}

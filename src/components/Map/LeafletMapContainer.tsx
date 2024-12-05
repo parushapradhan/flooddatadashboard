@@ -59,9 +59,19 @@ export const LeafletMapContainer = ({
         key={JSON.stringify(floodZoneData)}
         data={floodZoneData}
         style={(feature) => {
+          if (!feature || !feature.properties) {
+            return {
+              color: 'gray', // Default color for undefined features
+              weight: 1,
+              fillColor: 'gray',
+              fillOpacity: 0.5,
+            };
+          }
+
           // Style based on the severity property
           const severity = feature.properties.severity;
           let color = 'gray';
+
           if (severity === 'High') {
             color = 'red';
           } else if (severity === 'Moderate') {
@@ -69,7 +79,6 @@ export const LeafletMapContainer = ({
           } else if (severity === 'Low') {
             color = 'green';
           }
-
           return {
             color: color, // Line/border color
             weight: 1,

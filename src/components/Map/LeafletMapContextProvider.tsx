@@ -8,8 +8,8 @@ interface MapContextValues {
   setLeafletLib: (e: typeof Leaflet | undefined) => void
   district: string | null;
   setDistrict: (zone: string | null) => void;
-  filterQuery: string;
-  setFilterQuery: (query: string) => void;
+  filterQuery?: string;
+  setFilterQuery?: (query: string) => void;
 }
 
 export const MapContext = createContext<MapContextValues | undefined>(undefined)

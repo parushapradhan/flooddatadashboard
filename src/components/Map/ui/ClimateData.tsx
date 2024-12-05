@@ -5,7 +5,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   CircularProgress,
   Table,
   TableBody,
@@ -13,29 +12,40 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from '@mui/material';
-import useMapContext from '../useMapContext'
+import useMapContext from '../useMapContext';
+import { SelectChangeEvent } from '@mui/material';
 
-const ClimateData = () => {
+// Define the type for climate data
+interface ClimateDataItem {
+  climate_id: number;
+  year: number;
+  average_rainfall_mm: number;
+  max_rainfall_mm: number;
+  temperature_c: number;
+}
+
+const ClimateData: React.FC = () => {
   const { district } = useMapContext();
-  const [climateData, setClimateData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [years, setYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [climateData, setClimateData] = useState<ClimateDataItem[]>([]);
+  const [filteredData, setFilteredData] = useState<ClimateDataItem[]>([]);
+  const [years, setYears] = useState<number[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number | string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchClimateData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(`/api/getClimateData?district=${district}`);
         if (!response.ok) {
           throw new Error('Failed to fetch climate data');
         }
-        const data = await response.json();
+
+        const data: ClimateDataItem[] = await response.json();
         setClimateData(data);
 
         // Extract unique years and sort them in descending order
@@ -50,7 +60,7 @@ const ClimateData = () => {
           const latestYearData = data.filter((item) => item.year === uniqueYears[0]);
           setFilteredData(latestYearData);
         }
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
@@ -60,8 +70,8 @@ const ClimateData = () => {
     fetchClimateData();
   }, [district]);
 
-  const handleYearChange = (event) => {
-    const year = event.target.value;
+  const handleYearChange = (event: SelectChangeEvent<string>) => {
+    const year = parseInt(event.target.value, 10);
     setSelectedYear(year);
     const yearData = climateData.filter((item) => item.year === year);
     setFilteredData(yearData);
@@ -93,7 +103,7 @@ const ClimateData = () => {
       <FormControl fullWidth sx={{ mb: 2 }}>
         <Select
           labelId="year-select-label"
-          value={selectedYear}
+          value={String(selectedYear)}
           onChange={handleYearChange}
         >
           {years.map((year) => (
@@ -120,7 +130,7 @@ const ClimateData = () => {
 
       {/* Climate Data Table */}
       {!loading && !error && filteredData.length > 0 && (
-        <TableContainer  sx={{ mt: 2 }}>
+        <TableContainer sx={{ mt: 2 }}>
           <Table size="small">
             <TableHead>
               <TableRow>

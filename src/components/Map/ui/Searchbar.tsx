@@ -2,6 +2,10 @@ import { useCallback, useState } from 'react'
 import { LatLngExpression } from 'leaflet'
 
 import useMapContext from '../useMapContext'
+interface SearchResult {
+  lat: string; // Assuming latitude is a string
+  lon: string; // Assuming longitude is a string
+}
 
 export const SearchBar = () => {
   const { map } = useMapContext()
@@ -35,7 +39,7 @@ export const SearchBar = () => {
   }, [searchQuery, map])
 
   const handleResultClick = useCallback(
-    (result) => {
+    (result: SearchResult) => {
       const position: LatLngExpression = [parseFloat(result.lat), parseFloat(result.lon)]
       map?.flyTo(position, 12, { animate: true })
       setSearchQuery('')
