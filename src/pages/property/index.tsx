@@ -1,10 +1,18 @@
-import React from 'react';
-import { Box, Typography, Grid, Card, CardMedia, CardContent, Button, TextField, MenuItem } from '@mui/material';
-
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+  MenuItem,
+  TextField,
+  Typography,
+} from '@mui/material'
+import React from 'react'
 
 const PropertyPage = () => {
   return (
-
     <Box sx={{ padding: 2 }}>
       {/* Header Section */}
       <Box sx={{ marginBottom: 4 }}>
@@ -38,9 +46,27 @@ const PropertyPage = () => {
             {/* Example List */}
             <Box>
               {[
-                { name: 'The Carson', size: '304 sqft', price: '$1,999', type: 'Studio', availability: 'Available Soon' },
-                { name: 'The Schenley', size: '420 sqft', price: '$2,075', type: 'Studio', availability: 'Available Soon' },
-                { name: 'The Sienna', size: '540 sqft', price: '$2,400', type: '1 Bedroom', availability: 'Available Soon' },
+                {
+                  name: 'The Carson',
+                  size: '304 sqft',
+                  price: '$1,999',
+                  type: 'Studio',
+                  availability: 'Available Soon',
+                },
+                {
+                  name: 'The Schenley',
+                  size: '420 sqft',
+                  price: '$2,075',
+                  type: 'Studio',
+                  availability: 'Available Soon',
+                },
+                {
+                  name: 'The Sienna',
+                  size: '540 sqft',
+                  price: '$2,400',
+                  type: '1 Bedroom',
+                  availability: 'Available Soon',
+                },
               ].map((item, index) => (
                 <Card key={index} sx={{ marginBottom: 2 }}>
                   <CardContent>
@@ -88,7 +114,7 @@ const PropertyPage = () => {
         </Grid>
       </Grid>
     </Box>
-  );
-};
+  )
+}
 
-export default PropertyPage;
+export default PropertyPage

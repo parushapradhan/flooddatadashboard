@@ -1,5 +1,6 @@
-'use client';
-import { createTheme } from '@mui/material/styles';
+'use client'
+
+import { createTheme } from '@mui/material/styles'
 
 const theme = createTheme({
   cssVariables: {
@@ -9,6 +10,6 @@ const theme = createTheme({
     light: true,
     dark: true,
   },
-});
+})
 
-export default theme;
+export default theme

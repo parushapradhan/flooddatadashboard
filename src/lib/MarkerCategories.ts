@@ -1,4 +1,4 @@
-import {  LocateFixed, LucideProps, PersonStanding, MapPin } from 'lucide-react'
+import { LocateFixed, LucideProps, MapPin, PersonStanding } from 'lucide-react'
 import { FunctionComponent } from 'react'
 import colors from 'tailwindcss/colors'
 
@@ -6,7 +6,7 @@ export enum Category {
   LOCATE = 0,
   CAT1 = 1,
   CAT2 = 2,
-  CAT3 = 3
+  CAT3 = 3,
 }
 
 export interface MarkerCategoriesValues {

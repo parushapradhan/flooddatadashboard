@@ -1,23 +1,14 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Container,
-  Grid,
-  Divider,
-  Snackbar,
-  Alert,
-} from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import RegisterPageLayout from '../../components/register-layout';
+import { Alert, Box, Button, Container, Divider, Grid, Snackbar, TextField, Typography } from '@mui/material'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import React, { useEffect, useState } from 'react'
+
+import RegisterPageLayout from '../../components/register-layout'
 
 const RegisterForm = () => {
-  const [isOwner, setIsOwner] = useState(false);
+  const [isOwner, setIsOwner] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,40 +16,40 @@ const RegisterForm = () => {
     phone: '', // Phone number field
     password: '',
     dob: null, // Date of birth field
-  });
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
-  const [mounted, setMounted] = useState(false); // To handle hydration issues
+  })
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' })
+  const [mounted, setMounted] = useState(false) // To handle hydration issues
 
   // Ensure the component is mounted before rendering dynamic content
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = e => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
 
-  const handleDateChange = (date) => {
-    setFormData((prev) => ({ ...prev, dob: date }));
-  };
+  const handleDateChange = date => {
+    setFormData(prev => ({ ...prev, dob: date }))
+  }
 
   const handleToggle = () => {
-    setIsOwner((prev) => !prev);
-    setFormData((prev) => ({
+    setIsOwner(prev => !prev)
+    setFormData(prev => ({
       ...prev,
       userAddress: '',
       organizationName: '',
-    })); // Clear role-specific fields when switching
-  };
+    })) // Clear role-specific fields when switching
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async e => {
+    e.preventDefault()
 
     const payload = {
       ...formData,
       role: isOwner ? 'owner' : 'user',
-    };
+    }
 
     try {
       const response = await fetch('/api/register', {
@@ -67,34 +58,38 @@ const RegisterForm = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
-      });
+      })
 
       if (response.ok) {
-        const data = await response.json();
-        setNotification({ open: true, message: data.message || 'Registration successful!', severity: 'success' });
+        const data = await response.json()
+        setNotification({
+          open: true,
+          message: data.message || 'Registration successful!',
+          severity: 'success',
+        })
       } else {
-        const errorData = await response.json();
+        const errorData = await response.json()
         setNotification({
           open: true,
           message: errorData.error || 'Registration failed. Please try again.',
           severity: 'error',
-        });
+        })
       }
     } catch (error) {
       setNotification({
         open: true,
         message: 'Network error. Please try again later.',
         severity: 'error',
-      });
+      })
     }
-  };
+  }
 
   const handleCloseNotification = () => {
-    setNotification({ ...notification, open: false });
-  };
+    setNotification({ ...notification, open: false })
+  }
 
   // Return null during server-side rendering to avoid hydration mismatch
-  if (!mounted) return null;
+  if (!mounted) return null
 
   return (
     <RegisterPageLayout>
@@ -179,39 +174,22 @@ const RegisterForm = () => {
                     label="Date of Birth"
                     value={formData.dob}
                     onChange={handleDateChange}
-                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                    renderInput={params => <TextField {...params} fullWidth required />}
                   />
                 </Grid>
- 
               </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Register as {isOwner ? 'Owner' : 'User'}
               </Button>
             </Box>
-            <Divider sx={{ my: 3, width: '100%' }}>
-              Or sign up as an Owner
-            </Divider>
-            <Button
-              variant="outlined"
-              onClick={handleToggle}
-              fullWidth
-              sx={{ mt: 1 }}
-            >
+            <Divider sx={{ my: 3, width: '100%' }}>Or sign up as an Owner</Divider>
+            <Button variant="outlined" onClick={handleToggle} fullWidth sx={{ mt: 1 }}>
               {isOwner ? 'Switch to User Registration' : 'Switch to Owner Registration'}
             </Button>
           </Box>
 
           {/* Notification Snackbar */}
-          <Snackbar
-            open={notification.open}
-            autoHideDuration={6000}
-            onClose={handleCloseNotification}
-          >
+          <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
             <Alert onClose={handleCloseNotification} severity={notification.severity}>
               {notification.message}
             </Alert>
@@ -219,7 +197,7 @@ const RegisterForm = () => {
         </Container>
       </LocalizationProvider>
     </RegisterPageLayout>
-  );
-};
+  )
+}
 
-export default RegisterForm;
+export default RegisterForm

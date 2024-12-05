@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-
+import React, { useState } from 'react'
 
 export const Legend = () => {
-  const [isVisible, setIsVisible] = useState(false); // Toggle legend visibility
+  const [isVisible, setIsVisible] = useState(false) // Toggle legend visibility
 
   const toggleLegend = () => {
-    setIsVisible((prev) => !prev);
-  };
-
+    setIsVisible(prev => !prev)
+  }
 
   return (
     <div style={{ zIndex: 400 }}>
@@ -25,14 +23,14 @@ export const Legend = () => {
       {/* Legend Content */}
       {isVisible && (
         <div
-          className="absolute bottom-2 right-3 bg-white p-3 rounded shadow-md"
+          className="absolute bottom-2 right-3 rounded bg-white p-3 shadow-md"
           style={{
             zIndex: 400,
             minWidth: '150px',
           }}
         >
-          <h4 className="text-sm font-bold mb-2">Flood Severity</h4>
-          <div className="flex items-center mb-1">
+          <h4 className="mb-2 text-sm font-bold">Flood Severity</h4>
+          <div className="mb-1 flex items-center">
             <span
               style={{
                 display: 'inline-block',
@@ -45,7 +43,7 @@ export const Legend = () => {
             ></span>
             <span className="text-sm">High</span>
           </div>
-          <div className="flex items-center mb-1">
+          <div className="mb-1 flex items-center">
             <span
               style={{
                 display: 'inline-block',
@@ -74,5 +72,5 @@ export const Legend = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}

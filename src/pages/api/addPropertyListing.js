@@ -1,9 +1,10 @@
-import getMSSQLPool from '#src/lib/db/getDBPool';
-import sql from 'mssql';
+import sql from 'mssql'
+
+import getMSSQLPool from '#src/lib/db/getDBPool'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
   const {
@@ -17,9 +18,9 @@ export default async function handler(req, res) {
     image_url,
     location,
     user_Id,
-  } = req.body;
+  } = req.body
 
-  console.log(req.body);
+  console.log(req.body)
 
   if (
     !price ||
@@ -30,51 +31,50 @@ export default async function handler(req, res) {
     !square_feet ||
     !location
   ) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({ error: 'Missing required fields' })
   }
 
   try {
-    const pool = await getMSSQLPool();
+    const pool = await getMSSQLPool()
 
     // Fetch district_id based on district_name
     const districtQuery = `
       SELECT district_id
       FROM District
       WHERE district_name = @district_name;
-    `;
+    `
 
     const districtResult = await pool
       .request()
       .input('district_name', sql.VarChar(255), district_name)
-      .query(districtQuery);
+      .query(districtQuery)
 
     if (districtResult.recordset.length === 0) {
-      return res.status(400).json({ error: 'Invalid district name' });
+      return res.status(400).json({ error: 'Invalid district name' })
     }
 
-    const district_id = districtResult.recordset[0].district_id;
+    const district_id = districtResult.recordset[0].district_id
 
     // Fetch latitude and longitude using OpenStreetMap API
     const geolocationResponse = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`
-    );
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`,
+    )
 
     if (!geolocationResponse.ok) {
-      throw new Error('Failed to fetch geolocation data');
+      throw new Error('Failed to fetch geolocation data')
     }
 
-    const geolocationData = await geolocationResponse.json();
+    const geolocationData = await geolocationResponse.json()
 
     if (geolocationData.length === 0) {
-      return res.status(400).json({ error: 'Invalid location' });
+      return res.status(400).json({ error: 'Invalid location' })
     }
 
-    const { lat, lon } = geolocationData[0];
-    const formattedPosition = `[${lat}, ${lon}]`; // Format as [[lat, long]]
-
+    const { lat, lon } = geolocationData[0]
+    const formattedPosition = `[${lat}, ${lon}]` // Format as [[lat, long]]
 
     // Generate a unique random integer for property_id
-    const uniquePropertyId = Math.floor(Math.random() * 1000000); // Generates a random integer between 0 and 999999
+    const uniquePropertyId = Math.floor(Math.random() * 1000000) // Generates a random integer between 0 and 999999
     console.log(uniquePropertyId)
     // Insert property information
     const insertQuery = `
@@ -106,7 +106,7 @@ export default async function handler(req, res) {
         @owner_id,
         @position
       );
-    `;
+    `
 
     await pool
       .request()
@@ -122,11 +122,11 @@ export default async function handler(req, res) {
       .input('district_id', sql.Int, district_id)
       .input('owner_id', sql.Int, 1) // TODO update the static value
       .input('position', sql.VarChar(255), formattedPosition) // Pass lat/long as position
-      .query(insertQuery);
+      .query(insertQuery)
 
-    res.status(200).json({ message: 'Listing added successfully', property_id: uniquePropertyId });
+    res.status(200).json({ message: 'Listing added successfully', property_id: uniquePropertyId })
   } catch (error) {
-    console.error('Error adding listing:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error adding listing:', error)
+    res.status(500).json({ error: 'Internal server error' })
   }
 }

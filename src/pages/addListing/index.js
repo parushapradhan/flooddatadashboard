@@ -1,14 +1,6 @@
-import React, { useState } from 'react';
-import {
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-} from '@mui/material';
-import { useRouter } from 'next/router';
+import { Box, Button, Checkbox, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 
 const AddRentalListing = () => {
   const [formData, setFormData] = useState({
@@ -23,87 +15,79 @@ const AddRentalListing = () => {
     number_of_complaints: '', // New field
     is_rental: false, // New field
     district_name: '', // New field for district
-  });
+  })
 
-  const [suggestions, setSuggestions] = useState([]);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [suggestions, setSuggestions] = useState([])
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false)
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
-  const districts = [
-    'Kathmandu',
-    'Pokhara',
-    'Chitwan',
-    'Biratnagar',
-    'Lalitpur',
-    'Bhaktapur',
-    'Dharan',
-  ]; // Add more districts as needed
+  const districts = ['Kathmandu', 'Pokhara', 'Chitwan', 'Biratnagar', 'Lalitpur', 'Bhaktapur', 'Dharan'] // Add more districts as needed
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
+  const handleChange = e => {
+    const { name, value, type, checked } = e.target
+    setFormData(prevData => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
-    }));
+    }))
 
     if (name === 'location') {
-      fetchSuggestions(value);
+      fetchSuggestions(value)
     }
-  };
+  }
 
-  const fetchSuggestions = async (searchQuery) => {
+  const fetchSuggestions = async searchQuery => {
     if (!searchQuery) {
-      setSuggestions([]);
-      return;
+      setSuggestions([])
+      return
     }
 
-    setLoadingSuggestions(true);
+    setLoadingSuggestions(true)
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`
-      );
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`,
+      )
 
       if (!response.ok) {
-        throw new Error('Failed to fetch location suggestions');
+        throw new Error('Failed to fetch location suggestions')
       }
 
-      const data = await response.json();
-      setSuggestions(data);
+      const data = await response.json()
+      setSuggestions(data)
     } catch (err) {
-      console.error(err);
-      setSuggestions([]);
+      console.error(err)
+      setSuggestions([])
     } finally {
-      setLoadingSuggestions(false);
+      setLoadingSuggestions(false)
     }
-  };
+  }
 
-  const handleSuggestionClick = (suggestion) => {
-    setFormData((prevData) => ({
+  const handleSuggestionClick = suggestion => {
+    setFormData(prevData => ({
       ...prevData,
       location: suggestion.display_name,
-    }));
-    setSuggestions([]);
-  };
+    }))
+    setSuggestions([])
+  }
 
   const fetchUserId = async () => {
     try {
-      const response = await fetch('/api/getUserSession');
+      const response = await fetch('/api/getUserSession')
       if (!response.ok) {
-        throw new Error('Failed to fetch user session');
+        throw new Error('Failed to fetch user session')
       }
-      const data = await response.json();
-      return data.userId; // Assumes `getUserSession` API returns `userId` in the response
+      const data = await response.json()
+      return data.userId // Assumes `getUserSession` API returns `userId` in the response
     } catch (err) {
-      console.error(err);
-      throw new Error('Unable to fetch user ID');
+      console.error(err)
+      throw new Error('Unable to fetch user ID')
     }
-  };
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleSubmit = async e => {
+    e.preventDefault()
+    setLoading(true)
 
     try {
       // const userId = await fetchUserId(); // Fetch user ID
@@ -112,21 +96,21 @@ const AddRentalListing = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, user_id: userId }), // Include user ID
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to add listing');
+        throw new Error('Failed to add listing')
       }
 
-      const result = await response.json();
-      alert('Listing added successfully!');
-      router.push('/'); // Redirect to home page or listings page
+      const result = await response.json()
+      alert('Listing added successfully!')
+      router.push('/') // Redirect to home page or listings page
     } catch (err) {
-      setError(err.message);
+      setError(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
@@ -156,7 +140,9 @@ const AddRentalListing = () => {
         />
         {loadingSuggestions && <Typography>Loading suggestions...</Typography>}
         {suggestions.length > 0 && (
-          <ul style={{ listStyleType: 'none', padding: 0, margin: 0, maxHeight: '150px', overflowY: 'scroll' }}>
+          <ul
+            style={{ listStyleType: 'none', padding: 0, margin: 0, maxHeight: '150px', overflowY: 'scroll' }}
+          >
             {suggestions.map((suggestion, index) => (
               <li
                 key={index}
@@ -240,23 +226,11 @@ const AddRentalListing = () => {
         />
 
         <FormControlLabel
-          control={
-            <Checkbox
-              name="is_rental"
-              checked={formData.is_rental}
-              onChange={handleChange}
-            />
-          }
+          control={<Checkbox name="is_rental" checked={formData.is_rental} onChange={handleChange} />}
           label="Is Rental"
         />
 
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          fullWidth
-          disabled={loading}
-        >
+        <Button variant="contained" color="primary" type="submit" fullWidth disabled={loading}>
           {loading ? 'Adding...' : 'Add Listing'}
         </Button>
         {error && (
@@ -266,7 +240,7 @@ const AddRentalListing = () => {
         )}
       </form>
     </Box>
-  );
-};
+  )
+}
 
-export default AddRentalListing;
+export default AddRentalListing

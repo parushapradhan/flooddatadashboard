@@ -1,31 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { Box,
-  Typography,
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import {
+  Avatar,
+  Box,
   Card,
   CardContent,
+  CircularProgress,
+  Divider,
   List,
   ListItem,
   ListItemText,
-  Divider,
-  CircularProgress,
-  Avatar,
-} from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+  Typography,
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
 
 const NotificationsPage = () => {
-  const [userDetails, setUserDetails] = useState(null); // Store user details
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [userDetails, setUserDetails] = useState(null) // Store user details
+  const [notifications, setNotifications] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const fetchUserDetails = async () => {
     try {
       const token = document.cookie
         .split('; ')
-        .find((row) => row.startsWith('auth_token='))
-        ?.split('=')[1];
+        .find(row => row.startsWith('auth_token='))
+        ?.split('=')[1]
 
-      if (!token) throw new Error('Missing authentication token');
+      if (!token) throw new Error('Missing authentication token')
 
       const response = await fetch('/api/getUserSession', {
         method: 'GET',
@@ -33,27 +34,27 @@ const NotificationsPage = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-      });
+      })
 
-      if (!response.ok) throw new Error('Failed to fetch user session');
+      if (!response.ok) throw new Error('Failed to fetch user session')
 
-      const data = await response.json();
-      console.log('User session data:', data); // Debugging
-      setUserDetails(data); // Store user details
+      const data = await response.json()
+      console.log('User session data:', data) // Debugging
+      setUserDetails(data) // Store user details
     } catch (err) {
-      console.error('Error fetching user session:', err);
-      setError(err.message);
+      console.error('Error fetching user session:', err)
+      setError(err.message)
     }
-  };
+  }
 
   const fetchNotifications = async () => {
     try {
       const token = document.cookie
         .split('; ')
-        .find((row) => row.startsWith('auth_token='))
-        ?.split('=')[1];
+        .find(row => row.startsWith('auth_token='))
+        ?.split('=')[1]
 
-      if (!token) throw new Error('Missing authentication token');
+      if (!token) throw new Error('Missing authentication token')
 
       const response = await fetch('/api/getNotifications', {
         method: 'GET',
@@ -61,28 +62,28 @@ const NotificationsPage = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-      });
+      })
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch notifications');
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to fetch notifications')
       }
 
-      const data = await response.json();
-      console.log('Notifications:', data.notifications);
-      setNotifications(data.notifications);
+      const data = await response.json()
+      console.log('Notifications:', data.notifications)
+      setNotifications(data.notifications)
     } catch (err) {
-      console.error('Error fetching notifications:', err);
-      setError(err.message);
+      console.error('Error fetching notifications:', err)
+      setError(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchUserDetails();
-    fetchNotifications();
-  }, []);
+    fetchUserDetails()
+    fetchNotifications()
+  }, [])
 
   if (loading) {
     return (
@@ -96,7 +97,7 @@ const NotificationsPage = () => {
       >
         <CircularProgress />
       </Box>
-    );
+    )
   }
 
   if (error) {
@@ -113,7 +114,7 @@ const NotificationsPage = () => {
           {error}
         </Typography>
       </Box>
-    );
+    )
   }
 
   return (
@@ -136,9 +137,7 @@ const NotificationsPage = () => {
             gap: 2,
           }}
         >
-          <Avatar sx={{ bgcolor: '#1976d2' }}>
-            {userDetails.name[0].toUpperCase()}
-          </Avatar>
+          <Avatar sx={{ bgcolor: '#1976d2' }}>{userDetails.name[0].toUpperCase()}</Avatar>
           <Box>
             <Typography variant="h5" component="h2">
               Welcome, {userDetails.name}
@@ -160,17 +159,14 @@ const NotificationsPage = () => {
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <NotificationsIcon fontSize="large" color="primary" />
-            <Typography
-              variant="h6"
-              sx={{ ml: 1, fontWeight: 'bold', color: '#1976d2' }}
-            >
+            <Typography variant="h6" sx={{ ml: 1, fontWeight: 'bold', color: '#1976d2' }}>
               Notifications
             </Typography>
           </Box>
           <Divider sx={{ mb: 2 }} />
           {notifications.length > 0 ? (
             <List>
-              {notifications.map((notification) => (
+              {notifications.map(notification => (
                 <React.Fragment key={notification.notification_id}>
                   <ListItem
                     sx={{
@@ -182,9 +178,7 @@ const NotificationsPage = () => {
                   >
                     <ListItemText
                       primary={notification.message}
-                      secondary={new Date(
-                        notification.created_at
-                      ).toLocaleString()}
+                      secondary={new Date(notification.created_at).toLocaleString()}
                     />
                   </ListItem>
                   <Divider />
@@ -199,7 +193,7 @@ const NotificationsPage = () => {
         </CardContent>
       </Card>
     </Box>
-  );
-};
+  )
+}
 
-export default NotificationsPage;
+export default NotificationsPage

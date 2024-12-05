@@ -18,12 +18,12 @@ const MarkerIconWrapper = ({ icon, color, label }: MarkerIconWrapperProps) => {
         <span className="absolute -inset-2 rounded-full opacity-40" style={{ backgroundColor: color }} />
       )}
       <div
-        className="relative inline-block rounded-full bg-primary p-2 text-white"
+        className="bg-primary relative inline-block rounded-full p-2 text-white"
         style={{ backgroundColor: color }}
       >
         {IconFC && <IconFC size={AppConfig.ui.markerIconSize} />}
         {label && (
-          <span className="absolute -top-2 -right-2 flex h-7 w-7 flex-col items-center rounded-full border-2 border-white bg-error pt-1 text-xs">
+          <span className="bg-error absolute -top-2 -right-2 flex h-7 w-7 flex-col items-center rounded-full border-2 border-white pt-1 text-xs">
             {label}
           </span>
         )}

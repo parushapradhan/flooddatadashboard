@@ -2,11 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-button, [type='button'], [type='reset'], [type='submit'] {
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
   background-color: black;
-  color: white /* Change transparent to inherit or desired color */
+  color: white; /* Change transparent to inherit or desired color */
 }
-
 
 /* FIXME: find a way to reset styles of leaflet in components */
 .leaflet-marker-icon.leaflet-div-icon {

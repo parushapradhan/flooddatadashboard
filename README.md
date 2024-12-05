@@ -1,4 +1,3 @@
-
 ```bash
 git clone https://github.com/richard-unterberg/next-leaflet-starter-typescript
 # then
@@ -8,7 +7,6 @@ yarn
 ```
 
 ### <a id="start-up"></a> 🏍️ Start up
-
 
 ```bash
 npm run dev
@@ -31,4 +29,3 @@ npm run start
 # or
 yarn start
 ```
-

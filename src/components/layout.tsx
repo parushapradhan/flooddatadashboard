@@ -1,9 +1,10 @@
-import { AppProvider } from '@toolpad/core/nextjs';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 // import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
-import type { Navigation } from '@toolpad/core/AppProvider';
-import theme from '../pages/theme';
+import type { Navigation } from '@toolpad/core/AppProvider'
+import { AppProvider } from '@toolpad/core/nextjs'
+
+import theme from '../pages/theme'
 
 const NAVIGATION: Navigation = [
   {
@@ -20,18 +21,18 @@ const NAVIGATION: Navigation = [
     title: 'Orders',
     icon: <ShoppingCartIcon />,
   },
-];
+]
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-toolpad-color-scheme="light">
       <body>
         {/* <AppRouterCacheProvider options={{ enableCssLayer: true }}> */}
-          <AppProvider theme={theme} navigation={NAVIGATION}>
-            {children}
-          </AppProvider>
+        <AppProvider theme={theme} navigation={NAVIGATION}>
+          {children}
+        </AppProvider>
         {/* </AppRouterCacheProvider> */}
       </body>
     </html>
-  );
+  )
 }

@@ -22,7 +22,6 @@ module.exports = {
         sans: ['var(--font-catamaran)', ...fontFamily.sans],
       },
     },
-
   },
   plugins: [],
 }

@@ -12,7 +12,7 @@ export const AppConfig = {
     menuIconSize: 16,
     topBarIconSize: 24,
   },
-  baseCenter: [27.6829626,85.3310192] as LatLngExpression, // bielefeld lol
+  baseCenter: [27.6829626, 85.3310192] as LatLngExpression, // bielefeld lol
 }
 
 export enum NavMenuVariant {

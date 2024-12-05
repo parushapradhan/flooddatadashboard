@@ -1,5 +1,5 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Box, Container, Button } from '@mui/material';
+import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material'
+import React from 'react'
 
 const RegisterPageLayout = ({ children }) => {
   return (
@@ -26,7 +26,7 @@ const RegisterPageLayout = ({ children }) => {
         </Typography>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default RegisterPageLayout;
+export default RegisterPageLayout

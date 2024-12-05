@@ -1,9 +1,9 @@
 import { LatLngExpression, Map } from 'leaflet'
 import { useEffect, useMemo, useState } from 'react'
 
-import useMapContext from '#src/components/Map/useMapContext'
 import { AppConfig } from '#lib/AppConfig'
 import { PlacesClusterType, PlacesType } from '#lib/Places'
+import useMapContext from '#src/components/Map/useMapContext'
 
 interface useMapDataValues {
   locations?: PlacesType

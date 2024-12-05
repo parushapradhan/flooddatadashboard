@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react'
 import { LatLngExpression } from 'leaflet'
+import { useCallback, useState } from 'react'
 
 import useMapContext from '../useMapContext'
+
 interface SearchResult {
-  lat: string; // Assuming latitude is a string
-  lon: string; // Assuming longitude is a string
+  lat: string // Assuming latitude is a string
+  lon: string // Assuming longitude is a string
 }
 
 export const SearchBar = () => {
@@ -21,7 +22,7 @@ export const SearchBar = () => {
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`,
       )
       const data = await response.json()
 
@@ -45,36 +46,33 @@ export const SearchBar = () => {
       setSearchQuery('')
       setSearchResults([])
     },
-    [map]
+    [map],
   )
 
   return (
-    <div className=" z-400 w-80 bg-white shadow-md p-4 rounded-md">
+    <div className=" z-400 w-80 rounded-md bg-white p-4 shadow-md">
       <div className="flex flex-col space-y-2">
         <input
           type="text"
           placeholder="Search for a location"
           value={searchQuery}
-          onChange={(e) => {
+          onChange={e => {
             setSearchQuery(e.target.value)
             setError(null)
           }}
-          className="p-2 border border-gray-300 rounded-md w-full"
+          className="w-full rounded-md border border-gray-300 p-2"
         />
-        <button
-          onClick={handleSearch}
-          className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
+        <button onClick={handleSearch} className="rounded-md bg-blue-500 p-2 text-white hover:bg-blue-600">
           Search
         </button>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
+        {error && <div className="text-sm text-red-500">{error}</div>}
         {searchResults.length > 0 && (
-          <ul className="bg-gray-100 rounded-md shadow-inner p-2 space-y-1 max-h-40 overflow-y-auto">
+          <ul className="max-h-40 space-y-1 overflow-y-auto rounded-md bg-gray-100 p-2 shadow-inner">
             {searchResults.map((result, index) => (
               <li
                 key={index}
                 onClick={() => handleResultClick(result)}
-                className="p-2 bg-white rounded-md hover:bg-blue-100 cursor-pointer"
+                className="cursor-pointer rounded-md bg-white p-2 hover:bg-blue-100"
               >
                 {result.display_name}
               </li>

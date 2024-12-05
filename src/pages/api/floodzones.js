@@ -1,6 +1,7 @@
+import sql from 'mssql'
 
-import getMSSQLPool from '#src/lib/db/getDBPool';
-import sql from 'mssql';
+import getMSSQLPool from '#src/lib/db/getDBPool'
+
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -10,19 +11,19 @@ const config = {
     encrypt: true, // Use encryption for Azure SQL or similar services
     trustServerCertificate: false, // Change to true if using self-signed certificates
   },
-};
+}
 
 export default async function handler(req, res) {
   try {
-    const { district } = req.body; // Get district name from the query string
+    const { district } = req.body // Get district name from the query string
 
     if (!district) {
-      return res.status(400).json({ error: 'District name is required' });
+      return res.status(400).json({ error: 'District name is required' })
     }
 
     // const pool = await getMSSQLPool();
-    let pool = new sql.ConnectionPool(config);
-    await pool.connect();
+    let pool = new sql.ConnectionPool(config)
+    await pool.connect()
 
     const result = await pool
       .request()
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
         FROM flood_zones f
         INNER JOIN District d ON f.district_id = d.district_id
         WHERE d.district_name = @district
-        `
+        `,
       )
 
     const features = result.recordset.map(row => ({
@@ -46,14 +47,14 @@ export default async function handler(req, res) {
         type: 'Polygon',
         coordinates: [JSON.parse(row.coordinates)], // Parse the JSON coordinates
       },
-    }));
+    }))
 
     res.status(200).json({
       type: 'FeatureCollection',
       features,
-    });
+    })
   } catch (err) {
-    console.error('Error fetching flood zones:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error fetching flood zones:', err)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 }

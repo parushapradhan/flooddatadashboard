@@ -1,73 +1,73 @@
-import React, { useEffect, useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
-  List,
-  ListItem,
-  Typography,
+  Box,
+  Button,
   Card,
   CardContent,
   CardMedia,
   CircularProgress,
-  Box,
-  Button,
   IconButton,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useRouter } from 'next/router';
+  List,
+  ListItem,
+  Typography,
+} from '@mui/material'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 
 const PropertyListings = ({ userId }) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const router = useRouter(); // React Router's navigation hook
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const router = useRouter() // React Router's navigation hook
 
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch(`/api/getUserListing?userId=${1}`); //TODO ADD USER ID AND HIDE THIS PAGE
+        const response = await fetch(`/api/getUserListing?userId=${1}`) //TODO ADD USER ID AND HIDE THIS PAGE
         if (!response.ok) {
-          throw new Error('Failed to fetch data');
+          throw new Error('Failed to fetch data')
         }
-        const result = await response.json();
-        setData(result);
+        const result = await response.json()
+        setData(result)
       } catch (err) {
-        setError(err.message);
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchListings();
-  }, [userId]);
+    fetchListings()
+  }, [userId])
 
-  const handleDelete = async (propertyId) => {
+  const handleDelete = async propertyId => {
     try {
       const response = await fetch(`/api/deleteListing`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ propertyId }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to delete the listing');
+        throw new Error('Failed to delete the listing')
       }
 
       // Remove the deleted item from the UI
-      setData((prevData) => prevData.filter((item) => item.property_id !== propertyId));
+      setData(prevData => prevData.filter(item => item.property_id !== propertyId))
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      alert(`Error: ${err.message}`)
     }
-  };
+  }
 
   const handleAddListing = () => {
-    router.push('/addListing');
-  };
+    router.push('/addListing')
+  }
 
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress />
       </Box>
-    );
+    )
   }
 
   if (error) {
@@ -75,25 +75,16 @@ const PropertyListings = ({ userId }) => {
       <Typography color="error" sx={{ textAlign: 'center', mt: 4 }}>
         {error}
       </Typography>
-    );
+    )
   }
 
   if (data.length === 0) {
-    return (
-      <Typography sx={{ textAlign: 'center', mt: 4 }}>
-        No listings available for this user.
-      </Typography>
-    );
+    return <Typography sx={{ textAlign: 'center', mt: 4 }}>No listings available for this user.</Typography>
   }
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ mb: 2 }}
-        onClick={handleAddListing}
-      >
+      <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={handleAddListing}>
         Add a Listing
       </Button>
       <List
@@ -105,7 +96,7 @@ const PropertyListings = ({ userId }) => {
           padding: 0,
         }}
       >
-        {data.map((item) => (
+        {data.map(item => (
           <ListItem
             key={item.property_id}
             sx={{
@@ -117,12 +108,7 @@ const PropertyListings = ({ userId }) => {
           >
             <Card sx={{ display: 'flex', width: '100%', position: 'relative' }}>
               {item.image_url && (
-                <CardMedia
-                  component="img"
-                  sx={{ width: 150 }}
-                  image={item.image_url}
-                  alt="Property Image"
-                />
+                <CardMedia component="img" sx={{ width: 150 }} image={item.image_url} alt="Property Image" />
               )}
               <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                 <CardContent>
@@ -147,9 +133,9 @@ const PropertyListings = ({ userId }) => {
                 aria-label="delete"
                 color="error"
                 sx={{ position: 'absolute', top: 8, right: 8 }}
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click from triggering
-                  handleDelete(item.property_id);
+                onClick={e => {
+                  e.stopPropagation() // Prevent card click from triggering
+                  handleDelete(item.property_id)
                 }}
               >
                 <DeleteIcon />
@@ -159,7 +145,7 @@ const PropertyListings = ({ userId }) => {
         ))}
       </List>
     </Box>
-  );
-};
+  )
+}
 
-export default PropertyListings;
+export default PropertyListings
