@@ -10,7 +10,7 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import * as React from 'react'
 
-import theme from './theme'
+import theme from '../lib/helper/theme'
 
 import '#components/Map/leaflet-custom.css'
 import '#src/globals.css'
