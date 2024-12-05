@@ -1,7 +1,5 @@
 import getMSSQLPool from '#src/lib/db/getDBPool';
 import sql from 'mssql'
-
-import getMSSQLPool from '#src/lib/db/getDBPool';
 // API to delete a listing
 export default async function handler(req, res)  {
   const { propertyId } = req.body;
@@ -34,8 +32,5 @@ export default async function handler(req, res)  {
     console.error('Error deleting listing:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+};
 
-// Start the server (if not already running elsewhere)
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

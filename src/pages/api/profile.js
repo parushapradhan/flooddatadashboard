@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken'
 import sql from 'mssql'
+import getMSSQLPool from '#src/lib/db/getDBPool';
 
-import dbConfig from '../../config/db'
+
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'
 
@@ -17,8 +18,7 @@ export default async function handler(req, res) {
 
   try {
     const { userId } = jwt.verify(token, JWT_SECRET)
-
-    const pool = await sql.connect(dbConfig)
+    const pool = await getMSSQLPool();
     const result = await pool
       .request()
       .input('userId', sql.Int, userId)
