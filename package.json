@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.2.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/leaflet": "^1.9.1",
     "@types/leaflet.markercluster": "^1.5.1",
     "@types/node": "18.13.0",
