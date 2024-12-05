@@ -23,7 +23,8 @@ const PropertyListings = ({ userId }) => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch(`/api/getUserListing?userId=${1}`) //TODO ADD USER ID AND HIDE THIS PAGE
+        const response = await fetch(`/api/getUserListing?userId=${1}`)
+
         if (!response.ok) {
           throw new Error('Failed to fetch data')
         }
@@ -89,7 +90,7 @@ const PropertyListings = ({ userId }) => {
       </Button>
       <List
         sx={{
-          maxHeight: '400px',
+          maxHeight: '70vh',
           overflowY: 'auto',
           border: '1px solid lightgray',
           borderRadius: '8px',

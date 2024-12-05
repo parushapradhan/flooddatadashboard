@@ -38,7 +38,6 @@ export default async function handler(req, res) {
     `
 
     const result = await pool.request().input('district', sql.VarChar(255), district).query(query)
-
     res.status(200).json(result.recordset)
   } catch (error) {
     console.error('Error fetching property data:', error)

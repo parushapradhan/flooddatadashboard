@@ -24,11 +24,11 @@ let pool = null
 async function getMSSQLPool() {
   try {
     if (!pool || !pool.connected) {
-      if (pool && !pool.connected) {
-        console.log('Connection pool is closed. Reconnecting...')
-        await pool.close()
-      }
-      console.log('Creating a new MSSQL connection pool...')
+      // if (pool && !pool.connected) {
+      //   console.log('Connection pool is closed. Reconnecting...')
+      //   await pool.close()
+      // }
+      // console.log('Creating a new MSSQL connection pool...')
       pool = new sql.ConnectionPool(config)
       await pool.connect()
     }

@@ -73,46 +73,52 @@ export default async function handler(req, res) {
     const { lat, lon } = geolocationData[0]
     const formattedPosition = `[${lat}, ${lon}]` // Format as [[lat, long]]
 
-    // Generate a unique random integer for property_id
-    const uniquePropertyId = Math.floor(Math.random() * 1000000) // Generates a random integer between 0 and 999999
-    console.log(uniquePropertyId)
-    // Insert property information
     const insertQuery = `
       INSERT INTO Property_Information (
-        property_id,
-        price,
-        rental_or_sale,
-        flood_risk_disclosed,
-        bedrooms,
-        bathrooms,
-        square_feet,
-        image_url,
+        position,
         address,
-        district_id,
+        number_of_complaints,
         owner_id,
-        position
+        is_rental,
+       last_updated,
+       current_flood_risk,
+       region_name,
+       district_id,
+       listing_date,
+       price,
+       rental_or_sale,
+       flood_risk_disclosed,
+       bedrooms,
+       bathrooms,
+       square_feet,
+       image_url
       )
       VALUES (
-        @property_id,
-        @price,
-        @rental_or_sale,
-        @flood_risk_disclosed,
-        @bedrooms,
-        @bathrooms,
-        @square_feet,
-        @image_url,
+        @position,
         @address,
-        @district_id,
+        @number_of_complaints,
         @owner_id,
-        @position
+        @is_rental,
+       @last_updated,
+       @current_flood_risk,
+       @region_name,
+       @district_id,
+       @listing_date,
+       @price,
+       @rental_or_sale,
+       @flood_risk_disclosed,
+       @bedrooms,
+       @bathrooms,
+       @square_feet,
+       @image_url
       );
     `
 
     await pool
       .request()
-      .input('property_id', sql.Int, uniquePropertyId) // Random unique integer ID
       .input('price', sql.Float, price)
       .input('rental_or_sale', sql.VarChar(10), rental_or_sale)
+      .input('is_rental', sql.Bit, rental_or_sale)
       .input('flood_risk_disclosed', sql.Bit, flood_risk_disclosed)
       .input('bedrooms', sql.Int, bedrooms)
       .input('bathrooms', sql.Int, bathrooms)
@@ -121,10 +127,15 @@ export default async function handler(req, res) {
       .input('address', sql.VarChar(255), location)
       .input('district_id', sql.Int, district_id)
       .input('owner_id', sql.Int, 1) // TODO update the static value
-      .input('position', sql.VarChar(255), formattedPosition) // Pass lat/long as position
+      .input('position', sql.VarChar(255), formattedPosition)
+      .input ('number_of_complaints',sql.Int,0)
+      .input('last_updated',sql.Date, new Date())
+      .input('current_flood_risk',sql.VarChar(255),'Unknown')
+      .input('region_name',sql.VarChar(255),district_name) // Pass lat/long as position
+      .input('listing_date',sql.Date, new Date())
       .query(insertQuery)
 
-    res.status(200).json({ message: 'Listing added successfully', property_id: uniquePropertyId })
+    res.status(200).json({ message: 'Listing added successfully'})
   } catch (error) {
     console.error('Error adding listing:', error)
     res.status(500).json({ error: 'Internal server error' })

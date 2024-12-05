@@ -16,6 +16,10 @@ import { SearchBar } from './ui/Searchbar'
 import useMapContext from './useMapContext'
 import useMarkerData from './useMarkerData'
 
+interface MapProps {
+  places: PlaceValues[];
+}
+
 const LeafletCluster = dynamic(async () => (await import('./LeafletCluster')).LeafletCluster(), {
   ssr: false,
 })
@@ -32,9 +36,8 @@ const LeafletMapContainer = dynamic(async () => (await import('./LeafletMapConta
   ssr: false,
 })
 
-const LeafletMapInner = () => {
+const LeafletMapInner = (props:MapProps) => {
   const { map, district } = useMapContext()
-  console.log('map district', district)
   const {
     width: viewportWidth,
     height: viewportHeight,
@@ -44,11 +47,10 @@ const LeafletMapInner = () => {
     refreshRate: 200,
   })
 
-  const [places, setPlaces] = useState<PlaceValues[]>([])
-  const [isLoadingPlaces, setIsLoadingPlaces] = useState(true)
+  console.log('map inner', props.places)
 
   const { clustersByCategory, allMarkersBoundCenter } = useMarkerData({
-    locations: Places, // Use the dynamically fetched places
+    locations: props.places? props.places: Places , // Use the dynamically fetched places
     map,
     viewportWidth,
     viewportHeight,
@@ -56,22 +58,11 @@ const LeafletMapInner = () => {
 
   const isLoading = !map || !viewportWidth || !viewportHeight
 
+
+
   /** Fetch places and watch position & zoom of all markers */
   useEffect(() => {
-    // const loadPlaces = async () => {
-    //   try {
-    //     const data = await fetchPlaces(); // Fetch places dynamically
-    //     setPlaces(data);
-    //   } catch (error) {
-    //     console.error('Error loading places:', error);
-    //   } finally {
-    //     setIsLoadingPlaces(false);
-    //   }
-    // };
-
-    // loadPlaces();
-
-    if (!allMarkersBoundCenter || !map) return
+    if (!allMarkersBoundCenter || !map ||!props) return
 
     const moveEnd = () => {
       map.off('moveend', moveEnd)
@@ -143,9 +134,9 @@ const LeafletMapInner = () => {
 }
 
 // Pass through to get context in <MapInner>
-const Map = () => (
+const Map = (props:MapProps) => (
   <LeafleftMapContextProvider>
-    <LeafletMapInner />
+    <LeafletMapInner places={props.places}/>
   </LeafleftMapContextProvider>
 )
 
