@@ -14,7 +14,7 @@ export default async function handler(req, res)  {
 
     // Query to delete the listing by property_id
     const deleteQuery = `
-      DELETE FROM Real_Estate_Listing
+      DELETE FROM Property_Information
       WHERE property_id = @propertyId;
     `;
 
