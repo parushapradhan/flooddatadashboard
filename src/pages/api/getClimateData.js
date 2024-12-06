@@ -1,6 +1,7 @@
 import sql from 'mssql'
 
 import getMSSQLPool from '#src/lib/db/getDBPool' // Replace with your DB connection function
+import pool from '#src/lib/db/db.js'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -15,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const pool = await getMSSQLPool()
+    if(!pool.connected || !pool.connecting) await pool.connect()
     const query = `
       SELECT
         climate_id,

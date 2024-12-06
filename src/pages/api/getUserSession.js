@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import sql from 'mssql'
-
+import pool from '#src/lib/db/db.js'
 import getMSSQLPool from '#src/lib/db/getDBPool'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
 
     // Connect to the database
-    const pool = await getMSSQLPool()
+    if(!pool.connected || !pool.connecting) await pool.connect()
 
     // Fetch user session information
     const result = await pool
