@@ -4,114 +4,187 @@ import {
   Card,
   CardContent,
   CardMedia,
+  FormControl,
   Grid,
+  InputLabel,
   MenuItem,
+  Select,
+  SelectChangeEvent,
   TextField,
   Typography,
 } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+
+interface Property {
+  property_id: number
+  address: string
+  region_name: string
+  price: number
+  bedrooms: number
+  bathrooms: number
+  current_flood_risk: string
+  image_url: string
+}
 
 const PropertyPage = () => {
+  const [properties, setProperties] = useState<Property[]>([])
+  const [regions, setRegions] = useState<string[]>([])
+  const [filters, setFilters] = useState({
+    minPrice: '',
+    maxPrice: '',
+    bedrooms: '',
+    region: '',
+  })
+
+  useEffect(() => {
+    fetchProperties()
+    fetchRegions()
+  }, [])
+
+  const fetchProperties = async () => {
+    try {
+      const query = new URLSearchParams(filters).toString() // Convert filters to query string
+      const response = await fetch(`/api/properties?${query}`)
+      const data = await response.json()
+      setProperties(data)
+    } catch (error) {
+      console.error('Error fetching properties:', error)
+    }
+  }
+
+  const fetchRegions = async () => {
+    try {
+      const response = await fetch(`/api/regions`)
+      const data = await response.json()
+      setRegions(data || [])
+    } catch (error) {
+      console.error('Error fetching regions:', error)
+      setRegions([])
+    }
+  }
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [name]: value,
+    }))
+  }
+
+  const handleDropdownChange = (event: SelectChangeEvent<string>) => {
+    const { name, value } = event.target
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [name as string]: value,
+    }))
+  }
+
+  const applyFilters = () => {
+    fetchProperties() // Fetch properties based on updated filters
+  }
+
   return (
-    <Box sx={{ padding: 2 }}>
-      {/* Header Section */}
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        Properties
+      </Typography>
+
+      {/* Filters Section */}
       <Box sx={{ marginBottom: 4 }}>
-        <Typography variant="h4" fontWeight="bold">
-          The Julian
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          419 Melwood Ave, Pittsburgh, PA 15213
-        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Min Price"
+              name="minPrice"
+              value={filters.minPrice}
+              onChange={handleFilterChange}
+              type="number"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Max Price"
+              name="maxPrice"
+              value={filters.maxPrice}
+              onChange={handleFilterChange}
+              type="number"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Bedrooms"
+              name="bedrooms"
+              value={filters.bedrooms}
+              onChange={handleFilterChange}
+              type="number"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>Region</InputLabel>
+              <Select name="region" value={filters.region} onChange={handleDropdownChange}>
+                <MenuItem value="">All Regions</MenuItem>
+                {Array.isArray(regions) &&
+                  regions.map((region, index) => (
+                    <MenuItem key={index} value={region}>
+                      {region}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Box sx={{ textAlign: 'right', marginTop: 2 }}>
+          <Button variant="contained" color="primary" onClick={applyFilters}>
+            Apply Filters
+          </Button>
+        </Box>
       </Box>
 
-      {/* Main Content */}
-      <Grid container spacing={2}>
-        {/* Left Section */}
-        <Grid item xs={12} md={8}>
-          {/* Image Section */}
-          <Card sx={{ marginBottom: 2 }}>
-            <CardMedia
-              component="img"
-              height="300"
-              image="https://via.placeholder.com/800x300" // Replace with the image URL
-              alt="Property"
-            />
-          </Card>
-
-          {/* What's Available Section */}
-          <Box>
-            <Typography variant="h5" fontWeight="bold" gutterBottom>
-              What's Available
-            </Typography>
-            {/* Example List */}
-            <Box>
-              {[
-                {
-                  name: 'The Carson',
-                  size: '304 sqft',
-                  price: '$1,999',
-                  type: 'Studio',
-                  availability: 'Available Soon',
-                },
-                {
-                  name: 'The Schenley',
-                  size: '420 sqft',
-                  price: '$2,075',
-                  type: 'Studio',
-                  availability: 'Available Soon',
-                },
-                {
-                  name: 'The Sienna',
-                  size: '540 sqft',
-                  price: '$2,400',
-                  type: '1 Bedroom',
-                  availability: 'Available Soon',
-                },
-              ].map((item, index) => (
-                <Card key={index} sx={{ marginBottom: 2 }}>
-                  <CardContent>
-                    <Typography variant="h6">{item.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.type} • {item.size}
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold" sx={{ marginTop: 1 }}>
-                      {item.price}
-                    </Typography>
-                    <Button variant="outlined" size="small" sx={{ marginTop: 2 }}>
-                      {item.availability}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          </Box>
-        </Grid>
-
-        {/* Right Section */}
-        <Grid item xs={12} md={4}>
-          {/* Contact Form */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Contact This Property
-              </Typography>
-              <TextField fullWidth label="Name" margin="normal" />
-              <TextField fullWidth label="Phone" margin="normal" />
-              <TextField fullWidth label="Email" margin="normal" />
-              <TextField
-                fullWidth
-                label="Message"
-                multiline
-                rows={4}
-                defaultValue="I am interested in this rental and would like to schedule a viewing."
-                margin="normal"
-              />
-              <Button variant="contained" fullWidth>
-                Check Availability
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
+      {/* Properties Display Section */}
+      <Grid container spacing={4}>
+        {properties.length > 0 ? (
+          properties.map(property => (
+            <Grid item xs={12} md={4} key={property.property_id}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={property.image_url || 'https://via.placeholder.com/400x300'}
+                  alt={property.address}
+                />
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold">
+                    {property.region_name}
+                  </Typography>
+                  <Typography variant="body1">{property.address}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {property.bedrooms} Bedrooms • {property.bathrooms} Bathrooms
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Flood Risk: {property.current_flood_risk}
+                  </Typography>
+                  <Typography variant="body1" fontWeight="bold">
+                    ${property.price}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ marginTop: 2 }}
+                    onClick={() => (window.location.href = `/property/${property.property_id}`)}
+                  >
+                    View Details
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Typography>No properties found.</Typography>
+        )}
       </Grid>
     </Box>
   )

@@ -1,5 +1,6 @@
 import 'leaflet/dist/leaflet.css'
 
+import ApartmentIcon from '@mui/icons-material/Apartment'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import HomeIcon from '@mui/icons-material/Home'
 import NotificationsIcon from '@mui/icons-material/Notifications'
@@ -28,6 +29,11 @@ const NAVIGATION_BASE: Navigation = [
     segment: '',
     title: 'Dashboard',
     icon: <DashboardIcon />,
+  },
+  {
+    segment: 'property',
+    title: 'Properties',
+    icon: <ApartmentIcon />,
   },
 ]
 
