@@ -125,7 +125,7 @@ const PropertyListings = ({ userId }) => {
               cursor: 'pointer',
               '&:hover': { backgroundColor: '#f5f5f5' },
             }}
-            onClick={() => window.open(`/property-details/${item.property_id}`, '_blank')}
+            onClick={() => window.open(`/property/${item.property_id}`, '_blank')}
           >
             <Card sx={{ display: 'flex', width: '100%', position: 'relative' }}>
               {item.image_url && (

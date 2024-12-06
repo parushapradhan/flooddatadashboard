@@ -1,6 +1,7 @@
 import getMSSQLPool from '#src/lib/db/getDBPool';
 import jwt from 'jsonwebtoken';
 import { parse } from 'cookie';
+import pool from '#src/lib/db/db.js'
 
 export default async function handler(req, res) {
   // Parse cookies to extract token
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
 
   try {
     // Establish database connection
-    const pool = await getMSSQLPool();
+    if(!pool.connected || !pool.connecting) await pool.connect()
 
     // Fetch total listings owned by the user
     const totalListingsResult = await pool.request()
