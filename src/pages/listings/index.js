@@ -12,6 +12,8 @@ import {
   List,
   ListItem,
   Stack,
+  Snackbar,
+  Alert,
   Typography,
 } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -22,6 +24,7 @@ const PropertyListings = ({ userId }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const router = useRouter() // React Router's navigation hook
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' })
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -62,6 +65,10 @@ const PropertyListings = ({ userId }) => {
     }
   }
 
+  const handleCloseNotification = () => {
+    setNotification({ ...notification, open: false })
+  }
+
   const handleCalculateFlood = async propertyId => {
     try {
       const response = await fetch(`/api/calculateFlood`, {
@@ -73,6 +80,11 @@ const PropertyListings = ({ userId }) => {
       if (!response.ok) {
         throw new Error('Failed to calculate')
       }
+      setNotification({
+        open: true,
+        message: 'Calculation in progress! Check notifications for update',
+        severity: 'success',
+      })
     } catch (err) {
       alert(`Error: ${err.message}`)
     }
@@ -176,6 +188,11 @@ const PropertyListings = ({ userId }) => {
           </ListItem>
         ))}
       </List>
+      <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
+            <Alert onClose={handleCloseNotification} severity={notification.severity}>
+              {notification.message}
+            </Alert>
+      </Snackbar>
     </Box>
   )
 }
