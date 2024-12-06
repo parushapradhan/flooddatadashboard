@@ -53,6 +53,19 @@ export default async function handler(req, res) {
       VALUES (@comment_id, @propertyId, @owner_id, @description, @commenter_email)
     `);
 
+    const notificationMessage = `You have a new message from ${name}: ${message}`;
+    await pool
+      .request()
+      .input('notification_id',sql.Int, generateRandomId())
+      .input('propertyId', sql.Int, propertyId)
+      .input('userId', sql.Int, owner.owner_id) // Owner ID from query result
+      .input('message', sql.Text, notificationMessage)
+      .input('createdAt', sql.DateTime, new Date()) // Current timestamp
+      .input('isRead', sql.Bit, 0) // Notification is unread
+      .query(`
+        INSERT INTO Notifications (notification_id, property_id, user_id, message, created_at, is_read)
+        VALUES (@notification_id, @propertyId, @userId, @message, @createdAt, @isRead)
+      `);
     // Respond with success
     res.status(200).json({ success: true, message: 'Email sent successfully.' })
   } catch (error) {
