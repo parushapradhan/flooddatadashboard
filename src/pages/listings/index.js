@@ -98,9 +98,9 @@ const PropertyListings = ({ userId }) => {
     )
   }
 
-  if (data.length === 0) {
-    return <Typography sx={{ textAlign: 'center', mt: 4 }}>No listings available for this user.</Typography>
-  }
+  // if (data.length === 0) {
+  //   return <Typography sx={{ textAlign: 'center', mt: 4 }}>No listings available for this user.</Typography>
+  // }
 
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto', mt: 4 }}>
