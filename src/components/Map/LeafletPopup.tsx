@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router' // Import useRouter
 import { Popup, PopupProps } from 'react-leaflet'
 
 import { AppConfig } from '#lib/AppConfig'
@@ -16,33 +17,24 @@ interface LeafletPopupProps extends PopupProps {
   icon: MarkerCategoriesValues['icon']
 }
 
-const LeafletPopup = ({
-  handlePopupClose,
-  handleOpenLocation,
-  color,
-  icon,
-  item,
-  ...props
-}: LeafletPopupProps) => {
+const LeafletPopup = ({ handlePopupClose, color, icon, item, ...props }: LeafletPopupProps) => {
   const { title, address } = item
+  const router = useRouter() // Initialize useRouter
+
+  const handleViewDetails = () => {
+    router.push(`/property/${item.id}`) // Navigate to the dynamic page
+  }
 
   return (
     <Popup {...props}>
       <div
         className="absolute rounded bg-white shadow"
         style={{
-          // todo: rework the offsets at some point
           marginLeft: `calc(-150px + ${AppConfig.ui.markerIconSize - 5}px)`,
-
-          // todo: some offest to align with the marker icon
-          // marginTop: -6,
         }}
       >
         <div className="flex flex-row justify-center pt-3" style={{ width: '300px' }}>
-          <div
-            className="flex w-full flex-col justify-center p-3 pt-6 text-center"
-            // style={{ marginTop: AppConfig.ui.markerIconSize * 2 + 8 }}
-          >
+          <div className="flex w-full flex-col justify-center p-3 pt-6 text-center">
             {/* Image Section */}
             <div style={{ position: 'relative', height: '150px', overflow: 'hidden' }}>
               <img
@@ -69,7 +61,6 @@ const LeafletPopup = ({
 
             {/* Content Section */}
             <div className="p-4">
-              {/* <div className="mb-1 text-lg font-bold">{item.price}/mo</div> */}
               <div className="mb-2 flex justify-between text-sm">
                 <span>🏠 {item.bedrooms}bd</span>
                 <span>🛁 {item.bathrooms}ba</span>
@@ -83,7 +74,7 @@ const LeafletPopup = ({
             <div className="mt-6 flex flex-row justify-between gap-2 rounded p-2">
               <button
                 className="bg-primary gap-2 rounded p-2 text-white"
-                onClick={() => handleOpenLocation()}
+                onClick={handleViewDetails} // Use the handleViewDetails function
               >
                 View More Details
               </button>
