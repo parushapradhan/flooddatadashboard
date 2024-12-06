@@ -4,7 +4,7 @@ import { Alert, Box, Button, Container, Divider, Grid, Snackbar, TextField, Typo
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import React, { useEffect, useState } from 'react'
-
+import { useRouter } from 'next/router';
 import RegisterPageLayout from '../../components/register-layout'
 
 const RegisterForm = () => {
@@ -14,11 +14,12 @@ const RegisterForm = () => {
     email: '',
     phone: '',
     password: '',
+    name:'',
     dob: null, // Date of birth field
   })
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' })
   const [mounted, setMounted] = useState(false) // To handle hydration issues
-
+  const router = useRouter();
   // Ensure the component is mounted before rendering dynamic content
   useEffect(() => {
     setMounted(true)
@@ -57,6 +58,9 @@ const RegisterForm = () => {
           message: data.message || 'Registration successful!',
           severity: 'success',
         })
+        setTimeout(() => {
+          router.push('/login');
+        }, 1500);
       } else {
         const errorData = await response.json()
         setNotification({
@@ -106,8 +110,8 @@ const RegisterForm = () => {
                     fullWidth
                     id="organizationName"
                     label="Organization Name"
-                    name="organizationName"
-                    value={formData.organizationName}
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                   />
                 </Grid>

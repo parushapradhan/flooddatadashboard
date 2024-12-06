@@ -3,16 +3,21 @@ import sql from 'mssql'
 
 import getMSSQLPool from '#src/lib/db/getDBPool'
 
-export default async function handler(req, res) {
-  const { name, email, password, phone, dob, role } = req.body
+function generateRandomId() {
+  return Math.floor(Math.random() * 1000000); // Generates a random integer between 0 and 999999
+}
 
-  if (!name || !email || !password || !phone || !dob || !role) {
+export default async function handler(req, res) {
+  const { name, email, password, phone, dob} = req.body
+  let role='Owner'
+  console.log(req.body)
+  if (!name || !email || !password || !phone || !dob) {
     return res.status(400).json({ error: 'All fields are required.' })
   }
 
   try {
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // const hashedPassword = await bcrypt.hash(password, 10)
 
     // Get the reusable connection pool
     const pool = await getMSSQLPool()
@@ -20,16 +25,17 @@ export default async function handler(req, res) {
     // Insert the user into the User_Information table and get the inserted user_id
     const userInsertResult = await pool
       .request()
+      .input('user_id',sql.Int, generateRandomId())
       .input('name', sql.NVarChar, name)
       .input('email', sql.NVarChar, email)
-      .input('password', sql.NVarChar, hashedPassword)
+      .input('password', sql.NVarChar, password)
       .input('phone_number', sql.NVarChar, phone)
       .input('created_at', sql.DateTime, new Date()) // Insert current date for created_at
-      .input('dob', sql.Int, dob)
+      .input('dob', sql.Date, dob)
       .query(
-        `INSERT INTO User_Information (name, email, password, phone_number, created_at, dob)
+        `INSERT INTO User_Information (user_id, name, email, password, phone_number, created_at, dob)
          OUTPUT INSERTED.user_id
-         VALUES (@name, @email, @password, @phone_number, @created_at, @dob)`,
+         VALUES (@user_id, @name, @email, @password, @phone_number, @created_at, @dob)`,
       )
 
     const userId = userInsertResult.recordset[0].user_id
