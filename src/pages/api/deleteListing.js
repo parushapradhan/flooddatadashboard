@@ -23,10 +23,6 @@ export default async function handler(req, res)  {
       .input('propertyId', sql.Int, propertyId)
       .query(deleteQuery);
 
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: 'Listing not found' });
-    }
-
     res.status(200).json({ message: 'Listing deleted successfully' });
   } catch (err) {
     console.error('Error deleting listing:', err);
