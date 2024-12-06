@@ -118,36 +118,7 @@ const NotificationsPage = () => {
   }
 
   return (
-    <Box
-      sx={{
-        p: 4,
-        maxWidth: 800,
-        mx: 'auto',
-        backgroundColor: '#f9f9f9',
-        borderRadius: 2,
-        boxShadow: 3,
-      }}
-    >
-      {userDetails && (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            mb: 4,
-            gap: 2,
-          }}
-        >
-          <Avatar sx={{ bgcolor: '#1976d2' }}>{userDetails.name[0].toUpperCase()}</Avatar>
-          <Box>
-            <Typography variant="h5" component="h2">
-              Welcome, {userDetails.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {userDetails.email}
-            </Typography>
-          </Box>
-        </Box>
-      )}
+
 
       <Card
         sx={{
@@ -192,7 +163,6 @@ const NotificationsPage = () => {
           )}
         </CardContent>
       </Card>
-    </Box>
   )
 }
 

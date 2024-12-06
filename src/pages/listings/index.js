@@ -11,6 +11,7 @@ import {
   IconButton,
   List,
   ListItem,
+  Stack,
   Typography,
 } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -61,6 +62,22 @@ const PropertyListings = ({ userId }) => {
     }
   }
 
+  const handleCalculateFlood = async propertyId => {
+    try {
+      const response = await fetch(`/api/calculateFlood`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ propertyId }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to calculate')
+      }
+    } catch (err) {
+      alert(`Error: ${err.message}`)
+    }
+  }
+
   const handleAddListing = () => {
     router.push('/addListing')
   }
@@ -86,7 +103,7 @@ const PropertyListings = ({ userId }) => {
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
+    <Box sx={{ maxWidth: 900, mx: 'auto', mt: 4 }}>
       <OwnerMetrics/>
       <Button variant="contained" color="primary" sx={{ mb: 2, mt:2 }} onClick={handleAddListing}>
         Add a Listing
@@ -131,8 +148,17 @@ const PropertyListings = ({ userId }) => {
                   <Typography variant="caption" color="text.secondary">
                     Last Updated: {item.last_updated || 'N/A'}
                   </Typography>
+
                 </CardContent>
+                <Button variant="contained" color="primary" sx={{ mb: 2, mt:2 }}  onClick={e => {
+                    e.stopPropagation() // Prevent card click from triggering
+                    handleCalculateFlood(item.property_id)
+                  }}>
+                Calculate Flood Risk
+                </Button>
               </Box>
+
+
               <IconButton
                 aria-label="delete"
                 color="error"
@@ -144,6 +170,8 @@ const PropertyListings = ({ userId }) => {
               >
                 <DeleteIcon />
               </IconButton>
+
+
             </Card>
           </ListItem>
         ))}
