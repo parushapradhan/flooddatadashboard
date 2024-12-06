@@ -1,4 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete'
+import OwnerMetrics from '#src/components/OwnerMetrics'
+
 import {
   Box,
   Button,
@@ -23,7 +25,7 @@ const PropertyListings = ({ userId }) => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch(`/api/getUserListing?userId=${1}`)
+        const response = await fetch('/api/getUserListing')
 
         if (!response.ok) {
           throw new Error('Failed to fetch data')
@@ -85,7 +87,8 @@ const PropertyListings = ({ userId }) => {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-      <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={handleAddListing}>
+      <OwnerMetrics/>
+      <Button variant="contained" color="primary" sx={{ mb: 2, mt:2 }} onClick={handleAddListing}>
         Add a Listing
       </Button>
       <List

@@ -19,11 +19,11 @@ export default async function handler(req, res) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret')
     const { userId } = decoded
 
-    console.log('User ID from token:', userId)
+
 
     // Connect to the database
     const pool = await getMSSQLPool()
-    console.log('Database connection established.')
+
 
     // Delete the session for this user
     const deleteResult = await pool.request().input('user_id', sql.Int, userId).query(`
@@ -31,7 +31,6 @@ export default async function handler(req, res) {
         WHERE user_id = @user_id
       `)
 
-    console.log('Session deleted:', deleteResult.rowsAffected)
 
     // Clear the auth_token cookie
     res.setHeader('Set-Cookie', `auth_token=; HttpOnly; Path=/; Max-Age=0;`)

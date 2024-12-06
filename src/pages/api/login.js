@@ -3,7 +3,7 @@ import sql from 'mssql'
 
 import getMSSQLPool from '#src/lib/db/getDBPool'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'
+const JWT_SECRET = process.env.JWT_SECRET
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -17,22 +17,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('Starting login process...')
+
     const trimmedEmail = email.trim()
-    console.log('Email provided:', trimmedEmail)
+
 
     // Database connection
     const pool = await getMSSQLPool()
-    console.log('Database connection established.')
+
 
     // Fetch user from User_Information table
     const result = await pool.request().input('email', sql.NVarChar, trimmedEmail).query(`
-        SELECT user_id, name, email, password 
-        FROM User_Information 
+        SELECT user_id, name, email, password
+        FROM User_Information
         WHERE email = @email
       `)
 
-    console.log('Query result:', result.recordset)
+
 
     // Check if user exists
     const user = result.recordset[0]
@@ -42,14 +42,13 @@ export default async function handler(req, res) {
     }
 
     // Password validation
-    console.log('Password provided:', password)
-    console.log('Password in database:', user.password)
+
     if (password !== user.password) {
       console.error('Password mismatch for user:', user.email)
       return res.status(401).json({ error: 'Invalid email or password' })
     }
 
-    console.log('User authenticated successfully:', user)
+
 
     // Generate JWT token
     const expiresIn = '1h'
@@ -58,7 +57,7 @@ export default async function handler(req, res) {
     // Generate session details
     const sessionId = Math.floor(Date.now() / 1000) // Use seconds since epoch for session_id
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 hour from now
-    console.log('Preparing to insert session with session_id:', sessionId, 'expires_at:', expiresAt)
+
 
     // Insert session into the Session table
     const sessionInsertResult = await pool
@@ -70,7 +69,7 @@ export default async function handler(req, res) {
         VALUES (@session_id, @user_id, @expires_at)
       `)
 
-    console.log('Session inserted successfully:', sessionInsertResult)
+
 
     // Set auth_token cookie
     const isProduction = process.env.NODE_ENV === 'production'

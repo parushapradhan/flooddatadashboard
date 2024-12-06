@@ -19,7 +19,6 @@ export default async function handler(req, res) {
     // Decode and validate the JWT token
     const decoded = jwt.verify(token, JWT_SECRET)
 
-    console.log('Decoded token:', decoded)
 
     // Connect to the database
     const pool = await getMSSQLPool()
@@ -36,7 +35,7 @@ export default async function handler(req, res) {
     }
 
     const user = result.recordset[0]
-    console.log('User session retrieved:', user)
+  
 
     return res.status(200).json({ user_id: user.user_id, name: user.name, email: user.email })
   } catch (err) {

@@ -12,7 +12,7 @@ export default function DashboardLayoutBasic() {
       try {
         const data = await fetchPlaces(); // Fetch places dynamically
         setPlaces(data);
-        console.log('data',data)
+
         setIsLoadingPlaces(false)
       } catch (error) {
         console.error('Error loading places:', error);

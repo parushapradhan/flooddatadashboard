@@ -47,7 +47,6 @@ const LeafletMapInner = (props:MapProps) => {
     refreshRate: 200,
   })
 
-  console.log('map inner', props.places)
 
   const { clustersByCategory, allMarkersBoundCenter } = useMarkerData({
     locations: props.places? props.places: Places , // Use the dynamically fetched places

@@ -1,8 +1,18 @@
 import sql from 'mssql'
-
+import jwt from 'jsonwebtoken'
 import getMSSQLPool from '#src/lib/db/getDBPool'
-
+import { parse } from 'cookie';
 export default async function handler(req, res) {
+  const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
+  const token = cookies.auth_token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = decoded.userId;
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -20,7 +30,7 @@ export default async function handler(req, res) {
     user_Id,
   } = req.body
 
-  console.log(req.body)
+
 
   if (
     !price ||
@@ -126,7 +136,7 @@ export default async function handler(req, res) {
       .input('image_url', sql.VarChar(255), image_url)
       .input('address', sql.VarChar(255), location)
       .input('district_id', sql.Int, district_id)
-      .input('owner_id', sql.Int, 1) // TODO update the static value
+      .input('owner_id', sql.Int, userId)
       .input('position', sql.VarChar(255), formattedPosition)
       .input ('number_of_complaints',sql.Int,0)
       .input('last_updated',sql.Date, new Date())

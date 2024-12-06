@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     // Decode the token to get the user ID
     const decoded = jwt.verify(token, JWT_SECRET)
 
-    console.log('Decoded token:', decoded)
+
 
     // Connect to the database
     const pool = await getMSSQLPool()

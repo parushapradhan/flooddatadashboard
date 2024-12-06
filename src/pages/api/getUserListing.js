@@ -1,15 +1,20 @@
 import sql from 'mssql'
+import jwt from 'jsonwebtoken';
+import { parse } from 'cookie';
 
 import getMSSQLPool from '#src/lib/db/getDBPool'
 
 // API to get both property and real estate listings
 export default async function handler(req, res) {
-  const { userId } = req.query
+  const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
+  const token = cookies.auth_token;
 
-  if (!userId) {
-    return res.status(400).json({ error: 'User ID is required' })
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = decoded.userId;
   try {
     const pool = await getMSSQLPool()
     // Query to fetch property and real estate listing data
@@ -39,7 +44,7 @@ export default async function handler(req, res) {
       .request()
       .input('userId', sql.Int, userId) // Use parameterized query for safety
       .query(query)
-    console.log(result)
+
     res.status(200).json(result.recordset) // Send results as JSON
   } catch (error) {
     console.error('Error fetching data:', error)

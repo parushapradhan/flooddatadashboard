@@ -5,7 +5,7 @@ import getMSSQLPool from '#src/lib/db/getDBPool'
 
 export default async function handler(req, res) {
   const { name, email, password, phone, dob, role } = req.body
-  console.log(req.body)
+
   if (!name || !email || !password || !phone || !dob || !role) {
     return res.status(400).json({ error: 'All fields are required.' })
   }

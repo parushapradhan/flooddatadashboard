@@ -46,7 +46,7 @@ export const FilterComponent = () => {
         }
       }
       map?.flyTo(position, 12, { animate: true })
-      console.log(district.name)
+
       setSearchQuery('')
       setFilteredDistricts(districts)
     },
