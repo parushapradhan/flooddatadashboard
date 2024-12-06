@@ -88,6 +88,8 @@ export default async function handler(req, res) {
       maxDrainageCapacity: 100,
     });
 
+
+    console.log(floodRisk)
     // Query to update the flood risk in the Flood_Risk_Details table
     const insertQuery = `
     INSERT INTO Flood_Risk_Details
@@ -103,6 +105,19 @@ export default async function handler(req, res) {
     .input('insuranceRequired', sql.Bit, floodRisk.riskLevel === 'High' ? 1 : 0) // Example logic for insurance
     .input('riskScore', sql.Float, floodRisk.floodRiskScore)
     .query(insertQuery);
+
+
+    const updateQuery = `
+  UPDATE Property_Information
+  SET current_flood_risk = @currentFloodRisk
+  WHERE property_id = @propertyId;
+`;
+
+await pool
+  .request()
+  .input('propertyId', sql.Int, propertyId)
+  .input('currentFloodRisk', sql.NVarChar, floodRisk.riskLevel) // E.g., Low, Medium, High
+  .query(updateQuery);
 
       const notificationId = generateRandomId();
     // Insert a notification into the Notifications table
