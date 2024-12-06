@@ -1,7 +1,14 @@
 import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material'
+import { useRouter } from 'next/router' // Import the useRouter hook
 import React from 'react'
 
 const RegisterPageLayout = ({ children }) => {
+  const router = useRouter() // Initialize the router
+
+  const handleLoginRedirect = () => {
+    router.push('/login') // Redirect to the login page
+  }
+
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
       {/* Header */}
@@ -10,7 +17,9 @@ const RegisterPageLayout = ({ children }) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Registration System
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={handleLoginRedirect}>
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
 
