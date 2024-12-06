@@ -8,12 +8,11 @@ import React, { useEffect, useState } from 'react'
 import RegisterPageLayout from '../../components/register-layout'
 
 const RegisterForm = () => {
-  const [isOwner, setIsOwner] = useState(false)
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    organizationName: '', // Organization name field
+    userAddress: '', // Address field
     email: '',
-    phone: '', // Phone number field
+    phone: '',
     password: '',
     dob: null, // Date of birth field
   })
@@ -34,21 +33,12 @@ const RegisterForm = () => {
     setFormData(prev => ({ ...prev, dob: date }))
   }
 
-  const handleToggle = () => {
-    setIsOwner(prev => !prev)
-    setFormData(prev => ({
-      ...prev,
-      userAddress: '',
-      organizationName: '',
-    })) // Clear role-specific fields when switching
-  }
-
   const handleSubmit = async e => {
     e.preventDefault()
 
     const payload = {
       ...formData,
-      role: isOwner ? 'owner' : 'user',
+      role: 'owner', // Always submitting as 'owner'
     }
 
     try {
@@ -104,31 +94,31 @@ const RegisterForm = () => {
             }}
           >
             <Typography component="h1" variant="h5" gutterBottom>
-              Register as {isOwner ? 'Owner' : 'User'}
+              Register as Owner
             </Typography>
+
+            {/* Owner Registration Form */}
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    id="firstName"
-                    label="First Name"
-                    name="firstName"
-                    autoComplete="given-name"
-                    value={formData.firstName}
+                    id="organizationName"
+                    label="Organization Name"
+                    name="organizationName"
+                    value={formData.organizationName}
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    name="lastName"
-                    autoComplete="family-name"
-                    value={formData.lastName}
+                    id="userAddress"
+                    label="Address"
+                    name="userAddress"
+                    value={formData.userAddress}
                     onChange={handleChange}
                   />
                 </Grid>
@@ -179,13 +169,79 @@ const RegisterForm = () => {
                 </Grid>
               </Grid>
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                Register as {isOwner ? 'Owner' : 'User'}
+                Register as Owner
               </Button>
             </Box>
+
+            {/* User Registration - Commented Out */}
+            {/*
+            <Box component="form" sx={{ mt: 2, width: '100%' }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    name="firstName"
+                    autoComplete="given-name"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="phone"
+                    label="Phone Number"
+                    name="phone"
+                    autoComplete="tel"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
+                  />
+                </Grid>
+              </Grid>
+              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                Register as User
+              </Button>
+            </Box>
+            */}
+
+            {/* Toggle Button for Owner Registration - Commented Out */}
+            {/*
             <Divider sx={{ my: 3, width: '100%' }}>Or sign up as an Owner</Divider>
-            <Button variant="outlined" onClick={handleToggle} fullWidth sx={{ mt: 1 }}>
-              {isOwner ? 'Switch to User Registration' : 'Switch to Owner Registration'}
+            <Button variant="outlined" fullWidth sx={{ mt: 1 }}>
+              Switch to Owner Registration
             </Button>
+            */}
           </Box>
 
           {/* Notification Snackbar */}
