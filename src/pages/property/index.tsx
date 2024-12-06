@@ -1,87 +1,87 @@
-import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Typography,
-  Grid,
+  Button,
   Card,
   CardContent,
   CardMedia,
-  TextField,
-  MenuItem,
-  Button,
   FormControl,
+  Grid,
   InputLabel,
+  MenuItem,
   Select,
   SelectChangeEvent,
-} from '@mui/material';
+  TextField,
+  Typography,
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
 
 interface Property {
-  property_id: number;
-  address: string;
-  region_name: string;
-  price: number;
-  bedrooms: number;
-  bathrooms: number;
-  current_flood_risk: string;
-  image_url: string;
+  property_id: number
+  address: string
+  region_name: string
+  price: number
+  bedrooms: number
+  bathrooms: number
+  current_flood_risk: string
+  image_url: string
 }
 
 const PropertyPage = () => {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [regions, setRegions] = useState<string[]>([]);
+  const [properties, setProperties] = useState<Property[]>([])
+  const [regions, setRegions] = useState<string[]>([])
   const [filters, setFilters] = useState({
     minPrice: '',
     maxPrice: '',
     bedrooms: '',
     region: '',
-  });
+  })
 
   useEffect(() => {
-    fetchProperties();
-    fetchRegions();
-  }, []);
+    fetchProperties()
+    fetchRegions()
+  }, [])
 
   const fetchProperties = async () => {
     try {
-      const query = new URLSearchParams(filters).toString(); // Convert filters to query string
-      const response = await fetch(`/api/properties?${query}`);
-      const data = await response.json();
-      setProperties(data);
+      const query = new URLSearchParams(filters).toString() // Convert filters to query string
+      const response = await fetch(`/api/properties?${query}`)
+      const data = await response.json()
+      setProperties(data)
     } catch (error) {
-      console.error('Error fetching properties:', error);
+      console.error('Error fetching properties:', error)
     }
-  };
+  }
 
   const fetchRegions = async () => {
     try {
-      const response = await fetch(`/api/regions`);
-      const data = await response.json();
-      setRegions(data || []);
+      const response = await fetch(`/api/regions`)
+      const data = await response.json()
+      setRegions(data || [])
     } catch (error) {
-      console.error('Error fetching regions:', error);
-      setRegions([]);
+      console.error('Error fetching regions:', error)
+      setRegions([])
     }
-  };
+  }
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
-    setFilters((prevFilters) => ({
+    const { name, value } = event.target
+    setFilters(prevFilters => ({
       ...prevFilters,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handleDropdownChange = (event: SelectChangeEvent<string>) => {
-    const { name, value } = event.target;
-    setFilters((prevFilters) => ({
+    const { name, value } = event.target
+    setFilters(prevFilters => ({
       ...prevFilters,
       [name as string]: value,
-    }));
-  };
+    }))
+  }
 
   const applyFilters = () => {
-    fetchProperties(); // Fetch properties based on updated filters
-  };
+    fetchProperties() // Fetch properties based on updated filters
+  }
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -148,8 +148,8 @@ const PropertyPage = () => {
                       key={index}
                       value={region}
                       sx={{
-                        typography: 'body1',       // Consistent typography
-                        padding: '8px 16px',      // Better padding for options
+                        typography: 'body1', // Consistent typography
+                        padding: '8px 16px', // Better padding for options
                         '&:hover': {
                           backgroundColor: '#f5f5f5', // Subtle hover effect
                         },
@@ -163,11 +163,7 @@ const PropertyPage = () => {
           </Grid>
         </Grid>
         <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={applyFilters}
-          >
+          <Button variant="contained" color="primary" onClick={applyFilters}>
             Apply Filters
           </Button>
         </Box>
@@ -176,7 +172,7 @@ const PropertyPage = () => {
       {/* Properties Display Section */}
       <Grid container spacing={4}>
         {properties.length > 0 ? (
-          properties.map((property) => (
+          properties.map(property => (
             <Grid item xs={12} md={4} key={property.property_id}>
               <Card>
                 <CardMedia

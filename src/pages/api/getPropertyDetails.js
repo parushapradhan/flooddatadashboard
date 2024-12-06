@@ -1,15 +1,16 @@
-import sql from 'mssql';
-import getMSSQLPool from '#src/lib/db/getDBPool';
+import sql from 'mssql'
+
+import getMSSQLPool from '#src/lib/db/getDBPool'
 
 export default async function handler(req, res) {
-  const { propertyId } = req.query;
+  const { propertyId } = req.query
 
   if (!propertyId) {
-    return res.status(400).json({ error: 'Property ID is required' });
+    return res.status(400).json({ error: 'Property ID is required' })
   }
 
   try {
-    const pool = await getMSSQLPool();
+    const pool = await getMSSQLPool()
 
     const query = `
       SELECT
@@ -26,19 +27,17 @@ export default async function handler(req, res) {
         image_url
       FROM Property_Information
       WHERE property_id = @propertyId;
-    `;
+    `
 
-    const result = await pool.request()
-      .input('propertyId', sql.Int, propertyId)
-      .query(query);
+    const result = await pool.request().input('propertyId', sql.Int, propertyId).query(query)
 
     if (result.recordset.length === 0) {
-      return res.status(404).json({ error: 'Property not found' });
+      return res.status(404).json({ error: 'Property not found' })
     }
 
-    res.status(200).json(result.recordset[0]);
+    res.status(200).json(result.recordset[0])
   } catch (error) {
-    console.error('Error fetching property details:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error fetching property details:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 }

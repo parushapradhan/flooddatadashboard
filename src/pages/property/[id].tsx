@@ -1,72 +1,72 @@
-import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
 import {
+  Alert,
   Box,
-  Typography,
+  Button,
   Card,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Table,
   TableBody,
   TableCell,
   TableRow,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
   TextField,
-  Button,
-  Alert,
-  SelectChangeEvent,
-} from '@mui/material';
+  Typography,
+} from '@mui/material'
+import { GetServerSideProps } from 'next'
+import React, { useState } from 'react'
 
 interface PropertyDetails {
-  property_id: number;
-  address: string;
-  region_name: string;
-  price: number;
-  bedrooms: number;
-  bathrooms: number;
-  current_flood_risk: string;
-  square_feet: number;
-  rental_or_sale: string;
-  number_of_complaints: number;
-  image_url: string;
-  owner_email: string;
+  property_id: number
+  address: string
+  region_name: string
+  price: number
+  bedrooms: number
+  bathrooms: number
+  current_flood_risk: string
+  square_feet: number
+  rental_or_sale: string
+  number_of_complaints: number
+  image_url: string
+  owner_email: string
 }
 
 interface ClimateData {
-  year: number;
-  average_rainfall_mm: number;
-  max_rainfall_mm: number;
-  temperature_c: number;
-  source: string;
+  year: number
+  average_rainfall_mm: number
+  max_rainfall_mm: number
+  temperature_c: number
+  source: string
 }
 
 interface PropertyPageProps {
-  property: PropertyDetails;
-  climateData: ClimateData[];
+  property: PropertyDetails
+  climateData: ClimateData[]
 }
 
 const PropertyDetailsPage = ({ property, climateData }: PropertyPageProps) => {
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleYearChange = (event: SelectChangeEvent<string>) => {
-    const year = event.target.value ? Number(event.target.value) : null;
-    setSelectedYear(year);
-  };
+    const year = event.target.value ? Number(event.target.value) : null
+    setSelectedYear(year)
+  }
 
   const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(false);
+    e.preventDefault()
+    setError(null)
+    setSuccess(false)
 
     if (!name || !email || !message) {
-      setError('All fields are required.');
-      return;
+      setError('All fields are required.')
+      return
     }
 
     try {
@@ -79,29 +79,29 @@ const PropertyDetailsPage = ({ property, climateData }: PropertyPageProps) => {
           email,
           message,
         }),
-      });
+      })
 
       if (response.ok) {
-        setSuccess(true);
-        setName('');
-        setEmail('');
-        setMessage('');
+        setSuccess(true)
+        setName('')
+        setEmail('')
+        setMessage('')
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to send the message.');
+        const data = await response.json()
+        setError(data.error || 'Failed to send the message.')
       }
     } catch (err) {
-      console.error('Error sending message:', err);
-      setError('An unexpected error occurred.');
+      console.error('Error sending message:', err)
+      setError('An unexpected error occurred.')
     }
-  };
+  }
 
   const filteredClimateData = selectedYear
-    ? climateData?.filter((data) => data.year === selectedYear)
-    : climateData;
+    ? climateData?.filter(data => data.year === selectedYear)
+    : climateData
 
   if (!property) {
-    return <Typography variant="h5">Property details not found.</Typography>;
+    return <Typography variant="h5">Property details not found.</Typography>
   }
 
   return (
@@ -161,7 +161,7 @@ const PropertyDetailsPage = ({ property, climateData }: PropertyPageProps) => {
             displayEmpty
           >
             <MenuItem value="">All Years</MenuItem>
-            {climateData?.map((data) => (
+            {climateData?.map(data => (
               <MenuItem key={data.year} value={data.year.toString()}>
                 {data.year}
               </MenuItem>
@@ -213,21 +213,21 @@ const PropertyDetailsPage = ({ property, climateData }: PropertyPageProps) => {
           <TextField
             label="Your Name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Your Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Message"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={e => setMessage(e.target.value)}
             fullWidth
             multiline
             rows={4}
@@ -239,35 +239,35 @@ const PropertyDetailsPage = ({ property, climateData }: PropertyPageProps) => {
         </form>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params as { id: string };
+export const getServerSideProps: GetServerSideProps = async context => {
+  const { id } = context.params as { id: string }
 
   try {
-    const propertyResponse = await fetch(`http://localhost:3000/api/properties?id=${id}`);
-    const property = await propertyResponse.json();
+    const propertyResponse = await fetch(`http://localhost:3000/api/properties?id=${id}`)
+    const property = await propertyResponse.json()
 
     if (!property || !property.property_id) {
-      return { notFound: true };
+      return { notFound: true }
     }
 
     const climateDataResponse = await fetch(
-      `http://localhost:3000/api/climateData?district=${property.region_name}`
-    );
-    const climateData = await climateDataResponse.json();
+      `http://localhost:3000/api/climateData?district=${property.region_name}`,
+    )
+    const climateData = await climateDataResponse.json()
 
     return {
       props: {
         property,
         climateData: Array.isArray(climateData) ? climateData : [],
       },
-    };
+    }
   } catch (error) {
-    console.error('Error fetching data:', error);
-    return { notFound: true };
+    console.error('Error fetching data:', error)
+    return { notFound: true }
   }
-};
+}
 
-export default PropertyDetailsPage;
+export default PropertyDetailsPage
