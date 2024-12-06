@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Card,
+  CardMedia,
   CardContent,
   CardMedia,
   CircularProgress,
@@ -44,7 +45,7 @@ const PropertyListings = ({ userId }) => {
 
   const handleDelete = async propertyId => {
     try {
-      const response = await fetch(`/api/deleteListing`, {
+      const response = await fetch('/api/deleteListing', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ propertyId }),
@@ -108,7 +109,7 @@ const PropertyListings = ({ userId }) => {
               cursor: 'pointer',
               '&:hover': { backgroundColor: '#f5f5f5' },
             }}
-            onClick={() => window.open(`/property-details/${item.property_id}`, '_blank')}
+            onClick={() => router.push(`/property/${item.property_id}`)}
           >
             <Card sx={{ display: 'flex', width: '100%', position: 'relative' }}>
               {item.image_url && (

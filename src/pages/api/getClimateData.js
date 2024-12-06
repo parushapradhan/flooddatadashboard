@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         max_rainfall_mm,
         temperature_c,
         source
-      FROM Climate_Data
+      FROM dbo.Climate_Data
       WHERE region_name = @district;
     `
 

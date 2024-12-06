@@ -29,6 +29,11 @@ const NAVIGATION_BASE: Navigation = [
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },
+  {
+    segment:"property",
+    title: "Properties",
+    icon: <ApartmentIcon/>
+  },
 ]
 
 export default function RootLayout({
