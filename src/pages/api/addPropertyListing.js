@@ -60,6 +60,7 @@ export default async function handler(req, res) {
       .query(districtQuery)
 
     if (districtResult.recordset.length === 0) {
+      console.log("hjere?")
       return res.status(400).json({ error: 'Invalid district name' })
     }
 
