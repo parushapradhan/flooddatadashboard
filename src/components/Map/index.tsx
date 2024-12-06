@@ -136,6 +136,7 @@ const LeafletMapInner = (props:MapProps) => {
 const Map = (props:MapProps) => (
   <LeafleftMapContextProvider>
     <LeafletMapInner places={props.places}/>
+    
   </LeafleftMapContextProvider>
 )
 

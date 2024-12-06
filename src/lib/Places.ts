@@ -12,6 +12,8 @@ export interface PlaceValues {
   bathrooms: number // Number of bathrooms
   sqft: number // Square footage
   image: string // URL to the image
+  risk:string
+  price:number
 }
 
 export type PlacesType = PlaceValues[]
@@ -174,6 +176,9 @@ export const fetchPlaces = async (): Promise<PlacesType> => {
       bedrooms: property.bedrooms,
       bathrooms: property.bathrooms,
       sqft: property.square_feet,
+      rental: property.rental_or_sale,
+      price: property.price,
+      risk: property.current_flood_risk,
       image: property.image_url || 'https://via.placeholder.com/400',
     }))
   } catch (error) {

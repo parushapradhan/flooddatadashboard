@@ -1,6 +1,6 @@
 import { LatLngExpression } from 'leaflet'
 import { useCallback, useState } from 'react'
-
+import {district } from '#src/lib/district'
 import useMapContext from '../useMapContext'
 
 interface District {
@@ -9,14 +9,7 @@ interface District {
   lon: number
 }
 
-const districts: District[] = [
-  { name: 'Kathmandu', lat: 27.7172, lon: 85.324 },
-  { name: 'Pokhara', lat: 28.2096, lon: 83.9856 },
-  { name: 'Biratnagar', lat: 26.4833, lon: 87.2833 },
-  { name: 'Lalitpur', lat: 27.6725, lon: 85.3294 },
-  { name: 'Bhaktapur', lat: 27.671, lon: 85.4298 },
-  // Add more districts as needed
-]
+const districts: District[] = district
 
 export const FilterComponent = () => {
   const { map, setDistrict } = useMapContext()

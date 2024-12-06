@@ -8,8 +8,6 @@ import { PlaceValues } from '#lib/Places'
 
 const MarkerIconWrapper = dynamic(() => import('#src/components/Map/LeafletMarker/MarkerIconWrapper'))
 
-const price = '20'
-
 interface LeafletPopupProps extends PopupProps {
   handlePopupClose: (active?: boolean) => void
   handleOpenLocation: () => void
@@ -65,13 +63,13 @@ const LeafletPopup = ({
                   color: 'white',
                 }}
               >
-                High Risk
+                {item.risk}
               </div>
             </div>
 
             {/* Content Section */}
             <div className="p-4">
-              <div className="mb-1 text-lg font-bold">${price}/mo</div>
+              {/* <div className="mb-1 text-lg font-bold">{item.price}/mo</div> */}
               <div className="mb-2 flex justify-between text-sm">
                 <span>🏠 {item.bedrooms}bd</span>
                 <span>🛁 {item.bathrooms}ba</span>
