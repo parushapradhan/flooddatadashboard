@@ -123,38 +123,13 @@ const PropertyPage = () => {
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <FormControl fullWidth sx={{ minWidth: 200 }}>
-              <InputLabel id="region-select-label">Region</InputLabel>
-              <Select
-                labelId="region-select-label"
-                id="region-select"
-                name="region"
-                value={filters.region}
-                onChange={handleDropdownChange}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      maxHeight: 200, // Limit dropdown height for better usability
-                    },
-                  },
-                }}
-              >
-                <MenuItem value="">
-                  <em>All Regions</em>
-                </MenuItem>
+            <FormControl fullWidth>
+              <InputLabel>Region</InputLabel>
+              <Select name="region" value={filters.region} onChange={handleDropdownChange}>
+                <MenuItem value="">All Regions</MenuItem>
                 {Array.isArray(regions) &&
                   regions.map((region, index) => (
-                    <MenuItem
-                      key={index}
-                      value={region}
-                      sx={{
-                        typography: 'body1', // Consistent typography
-                        padding: '8px 16px', // Better padding for options
-                        '&:hover': {
-                          backgroundColor: '#f5f5f5', // Subtle hover effect
-                        },
-                      }}
-                    >
+                    <MenuItem key={index} value={region}>
                       {region}
                     </MenuItem>
                   ))}
