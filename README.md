@@ -1,6 +1,5 @@
 ```bash
-git clone https://github.com/richard-unterberg/next-leaflet-starter-typescript
-# then
+
 npm install
 # or
 yarn
