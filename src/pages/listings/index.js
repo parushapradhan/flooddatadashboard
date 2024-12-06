@@ -8,12 +8,7 @@ import {
   CardMedia,
   CardContent,
   CardMedia,
-  CircularProgress,
-  IconButton,
-  List,
-  ListItem,
-  Typography,
-} from '@mui/material'
+import { Box, Card, CardContent, CardMedia, CircularProgress, Grid, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -29,12 +24,13 @@ const PropertyListings = ({ userId }) => {
         const response = await fetch('/api/getUserListing')
 
         if (!response.ok) {
-          throw new Error('Failed to fetch data')
+          throw new Error('Failed to fetch listings')
         }
-        const result = await response.json()
-        setData(result)
+        const data = await response.json()
+        setListings(data)
       } catch (err) {
-        setError(err.message)
+        console.error('Error fetching listings:', err)
+        setError('Failed to load listings')
       } finally {
         setLoading(false)
       }
@@ -76,14 +72,18 @@ const PropertyListings = ({ userId }) => {
 
   if (error) {
     return (
-      <Typography color="error" sx={{ textAlign: 'center', mt: 4 }}>
+      <Typography variant="h6" color="error" sx={{ textAlign: 'center', mt: 4 }}>
         {error}
       </Typography>
     )
   }
 
-  if (data.length === 0) {
-    return <Typography sx={{ textAlign: 'center', mt: 4 }}>No listings available for this user.</Typography>
+  if (!listings || listings.length === 0) {
+    return (
+      <Typography variant="h6" sx={{ textAlign: 'center', mt: 4 }}>
+        No listings available.
+      </Typography>
+    )
   }
 
   return (
@@ -146,9 +146,9 @@ const PropertyListings = ({ userId }) => {
                 <DeleteIcon />
               </IconButton>
             </Card>
-          </ListItem>
+          </Grid>
         ))}
-      </List>
+      </Grid>
     </Box>
   )
 }
