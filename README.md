@@ -5,7 +5,21 @@ npm install
 yarn
 ```
 
+
+### Setting up enviroment
+Add a .env file with the values :
+```bash
+DB_USER=
+DB_PASSWORD=
+DB_SERVER=
+DB_DATABASE=
+DB_PORT=
+JWT_SECRET=
+SERVER_URL=
+```
 ### <a id="start-up"></a> 🏍️ Start up
+
+
 
 ```bash
 npm run dev
